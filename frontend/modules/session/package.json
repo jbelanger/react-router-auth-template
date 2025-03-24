@@ -1,0 +1,33 @@
+{
+    "name": "@gc-fwcs/session",
+    "license": "AGPL-3.0",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "main": "src/index.ts",
+    "types": "src/index.ts",
+    "scripts": {
+        "prettier": "prettier --check .",
+        "prettier:fix": "prettier --write .",
+        "lint": "eslint \"src/**/*.ts*\"",
+        "tsc": "tsc --project tsconfig.json",
+        "test": "jest --detectOpenHandles --forceExit --passWithNoTests",
+        "clean": "rm -rf node_modules"
+    },
+    "dependencies": {
+        "@gc-fwcs/helpers": "workspace:*",
+        "@gc-fwcs/logger": "workspace:*",
+        "connect-redis": "^7.1.0",
+        "express-session": "^1.18.1",
+        "validator": "^13.12.0"
+    },
+    "peerDependencies": {
+        "express": "^4.21.2",
+        "redis": "^4.7.0"
+    },
+    "devDependencies": {
+        "tsconfig": "workspace:*",
+        "@types/express": "^5.0.0",
+        "@types/express-session": "^1.18.1"
+    }
+}

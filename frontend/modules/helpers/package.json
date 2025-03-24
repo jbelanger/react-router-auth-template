@@ -1,0 +1,23 @@
+{
+    "name": "@gc-fwcs/helpers",
+    "license": "AGPL-3.0",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "main": "src/index.ts",
+    "types": "src/index.ts",
+    "scripts": {
+        "prettier": "prettier --check .",
+        "prettier:fix": "prettier --write .",
+        "lint": "eslint \"src/**/*.ts*\"",
+        "tsc": "tsc --project tsconfig.json",
+        "test": "jest --detectOpenHandles --forceExit --passWithNoTests",
+        "clean": "rm -rf node_modules"
+    },
+    "dependencies": {
+        "minimatch": "^10.0.1"
+    },
+    "devDependencies": {
+        "tsconfig": "workspace:*"
+    }
+}

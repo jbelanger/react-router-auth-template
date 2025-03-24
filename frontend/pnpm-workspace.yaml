@@ -1,0 +1,5 @@
+packages:
+  - apps/auth-with-reactrouter
+  - modules/*
+onlyBuiltDependencies:
+  - esbuild

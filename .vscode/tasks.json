@@ -1,0 +1,47 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "kill-node",
+      "type": "shell",
+      "command": "cmd",
+      "args": ["/c", "taskkill /F /IM node.exe /T 2>nul || exit 0"],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "never"
+      }
+    },
+    {
+      "label": "kill-dotnet",
+      "type": "shell",
+      "command": "cmd",
+      "args": ["/c", "taskkill /F /IM dotnet.exe /T 2>nul || exit 0"],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "never"
+      }
+    },
+    {
+      "label": "build",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/backend/AuthBackend/AuthBackend.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "kill-and-build",
+      "dependsOrder": "sequence",
+      "dependsOn": ["kill-dotnet", "build"],
+      "problemMatcher": []
+    }
+  ]
+}
