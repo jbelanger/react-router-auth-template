@@ -42,8 +42,6 @@ export interface ExpressServerConfig {
     cwd: string;
     /** Server operation mode */
     mode: NodeEnv;
-    /** Server port */
-    port: string;
 
     /**
      * Session configuration.
@@ -87,7 +85,6 @@ const SESSION_TTL = {
 const defaultConfig: ExpressServerConfig = {
     cwd: './',
     mode: 'development',
-    port: '3000',
     session: {
         storageType: 'memory',
         secrets: ['development-only-secret'],
@@ -109,12 +106,6 @@ const defaultConfig: ExpressServerConfig = {
     reactRouterEntryPoint: 'index.ts'
 };
 
-/** Server initialization options */
-export interface InitializeOptions {
-    /** Whether to start listening for connections */
-    startServer?: boolean;
-}
-
 /**
  * Initializes and configures an Express server.
  * 
@@ -128,12 +119,12 @@ export interface InitializeOptions {
  * - Source map support
  * 
  * @param config Server configuration (merged with defaults)
- * @param options Initialization options
- * @returns Configured Express application
+ * @returns Configured Express application that can be started by the client
  * 
  * @example
  * ```typescript
- * const app = await initializeExpressServer({
+ * // Initialize the Express application
+ * const app = await createExpressApp({
  *   mode: 'production',
  *   session: {
  *     storageType: 'redis',
@@ -142,11 +133,13 @@ export interface InitializeOptions {
  *     ttlSeconds: 3600
  *   }
  * });
+ * 
+ * // Start the server (handled by client)
+ * app.listen(3000, () => console.log('Server running on port 3000'));
  * ```
  */
-export async function initializeExpressServer(
-    config: Partial<ExpressServerConfig> = {},
-    options: InitializeOptions = {}
+export async function createExpressApp(
+    config: Partial<ExpressServerConfig> = {}
 ): Promise<Express> {
     const log = getLogger('express.server');
 
@@ -175,7 +168,6 @@ export async function initializeExpressServer(
     };
 
     log.info('Validating runtime environment...');
-    const port = environment.port;
 
     log.info('Installing source map support');
     sourceMapSupport.install();
@@ -249,13 +241,7 @@ export async function initializeExpressServer(
     app.use(globalErrorMiddleware(environment.cwd));
 
     log.info('Server initialization complete');
-
-    if (options.startServer) {
-        app.listen(port, () => log.info(`Listening on http://localhost:${port}/`));
-    }
-
     return app;
 }
 
 export { createServerBuildConfig } from './vite.server.ts';
-export { createCorrelationMiddleware } from './middleware/correlation.middleware.ts';

@@ -7,9 +7,8 @@
     "build": "pnpm build:application && pnpm build:server",
     "build:application": "react-router build",
     "build:server": "vite build --config ./vite.express.server.config.ts",
-    "dev": "tsx --env-file-if-exists=.env server.ts",
-    "start": "cross-env NODE_ENV=production node --env-file-if-exists=./.env --import tsx server.ts",
-    "start2": "cross-env NODE_ENV=production node --env-file-if-exists=./.env ./build/server/server.js",
+    "dev": "tsx --env-file-if-exists=.env app/express.entry.server.ts",
+    "start": "cross-env NODE_ENV=production node --env-file-if-exists=./.env ./build/server/express.entry.server.js",
     "typecheck": "react-router typegen && tsc",
     "clean": "if exist node_modules rd /s /q node_modules && if exist build rd /s /q build"
   },

@@ -9,7 +9,7 @@ export default defineConfig(createServerBuildConfig({
         rollupOptions: {
             // Specifies the entry point for the server runtime.
             // This is the TypeScript file that Vite will start building from.
-            input: ['./server.ts'],
+            input: ['./app/express.entry.server.ts'],
             external: ["@gc-fwcs/logger", "@gc-fwcs/express", "@gc-fwcs/helpers"] // To further reduce build size, exclude these modules
         }
     }
