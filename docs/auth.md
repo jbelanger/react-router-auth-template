@@ -175,20 +175,92 @@ This document details the secure token-based authentication architecture for an 
 
 ## 5. Summary Flow
 
-1. **Initial Authentication:**
-   User visits protected route → Generate PKCE challenge and state → Redirect to Entra ID → User authenticates → Return authorization code → Exchange code with PKCE for tokens
+### Authentication & Session Establishment
 
-2. **Session and Token Setup:**
-   Express creates secure session → Remix stores MSAL tokens in distributed cache → Set secure session cookie → Return initial HTML to browser
+```mermaid
+sequenceDiagram
+    participant Browser
+    participant Express
+    participant Remix
+    participant Redis
+    participant AzureAD
+    participant API
 
-3. **API Access:**
-   Remix sends Microsoft token to backend → Backend validates and returns signed JWT with roles → Server verifies JWT signature → Extracts and stores roles → Updates session with API token
+    %% Initial Authentication
+    Browser->>Express: Access protected route
+    Express->>Remix: Forward request to Remix
+    Remix->>Remix: Generate PKCE challenge and state
+    Remix->>Browser: Redirect to Entra ID (with PKCE)
+    Browser->>AzureAD: Authentication request
+    AzureAD->>Browser: Return authorization code
+    Browser->>Express: Submit authorization code
+    Express->>Remix: Forward auth code
+    Remix->>AzureAD: Exchange code with PKCE verifier for tokens
+    AzureAD->>Remix: Return ID, access, and refresh tokens
 
-4. **Protected Routes:**
-   User navigates app → Session validation → Token freshness check → Automatic token refresh if needed → Role-based access control → Authenticated API requests
+    %% Session and Token Setup
+    Remix->>Express: Create session
+    Express->>Redis: Store session data
+    Express->>Browser: Set secure HTTP-only cookie
+    Remix->>Redis: Store MSAL tokens in distributed cache
+    Remix->>Browser: Return initial HTML
+```
 
-5. **Token Lifecycle:**
-   Monitor token expiration → MSAL silent token refresh → Request new API token → Update session → Handle refresh failures → Redirect to login if needed
+### API Access & Protected Routes
+
+```mermaid
+sequenceDiagram
+    participant Browser
+    participant Express
+    participant Remix
+    participant Redis
+    participant AzureAD
+    participant API
+
+    %% API Access
+    Browser->>Express: Request data requiring API access
+    Express->>Remix: Forward request to Remix
+    Remix->>Redis: Retrieve Microsoft token
+    Remix->>API: Send Microsoft token
+    API->>API: Validate Microsoft token
+    API->>Remix: Return signed JWT with roles
+    Remix->>Remix: Verify JWT signature & extract roles
+    Remix->>Express: Update session with API token
+    Express->>Redis: Store updated session
+    Remix->>Browser: Return requested data
+
+    %% Protected Routes
+    Browser->>Express: Navigate to protected route
+    Express->>Redis: Validate session
+    Express->>Remix: Forward request with session
+    Remix->>Remix: Check token freshness & roles
+    Remix->>API: Make authenticated API request
+    API->>Remix: Return data
+    Remix->>Browser: Render protected page
+```
+
+### Token Lifecycle Management
+
+```mermaid
+sequenceDiagram
+    participant Browser
+    participant Express
+    participant Remix
+    participant Redis
+    participant AzureAD
+    participant API
+
+    %% Token Lifecycle
+    Note over Remix,Redis: Token monitoring process
+    Remix->>Redis: Check token expiration
+    Remix->>AzureAD: Silent token refresh (if needed)
+    AzureAD->>Remix: Return new tokens
+    Remix->>API: Request new API token
+    API->>Remix: Return new JWT
+    Remix->>Express: Update session
+    Express->>Redis: Store updated tokens
+    Note over Browser,Express: On next request, refreshed tokens are used
+```
 
 ---
 
