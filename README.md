@@ -1,14 +1,10 @@
-# Authentication POC with .NET Backend and React Frontend
+# Authentication POC with Remix SSR and .NET Backend
 
-This project demonstrates a secure token-based authentication architecture using Microsoft Entra ID (formerly Azure AD) Single Sign-On (SSO) with a .NET backend API and a React frontend using React Router. The architecture ensures secure handling of tokens while enabling seamless authentication across the entire application.
+This project demonstrates a secure token-based authentication architecture using Microsoft Entra ID (formerly Azure AD) with a .NET backend API and a Remix frontend. The architecture ensures that sensitive tokens remain server-side while providing seamless authentication and authorization throughout the application.
 
 ## Project Structure
 
 The project is organized as a monorepo containing:
-
-- **Backend**: .NET 7 API for authentication and authorization services
-- **Frontend**: React-based application with modular component libraries
-- **Documentation**: Detailed authentication architecture and technical research
 
 ```
 │
@@ -36,56 +32,111 @@ The project is organized as a monorepo containing:
 
 ## Authentication Architecture
 
-The system implements a secure token-based authentication flow with Microsoft Entra ID as the identity provider, using OAuth 2.0/OpenID Connect protocols.
-
-### Key Authentication Features
-
-1. **Server-Side Token Management**: All sensitive tokens (access, refresh tokens) remain server-side only
-2. **PKCE Authentication Flow**: Uses Proof Key for Code Exchange for secure authentication
-3. **Session-Based State**: Redis-backed sessions for maintaining auth state
-4. **Automatic Token Refresh**: Background token refresh maintains valid sessions
-5. **Role-Based Authorization**: Role capabilities from Entra ID claims
+This project implements a secure token-based authentication system with Microsoft Entra ID as the identity provider, using OAuth 2.0/OpenID Connect protocols. Due to Remix's lack of middleware support, Express is used to provide consistent session management across the entire request pipeline.
 
 ### Authentication Flow
 
-1. User is redirected to Microsoft Entra ID login
-2. Authorization code is returned to application callback endpoint
-3. Backend exchanges code for tokens (access, ID, refresh)
-4. Tokens are stored in server-side session (never exposed to client)
-5. Application maintains authentication with token refresh
+1. **User Authentication via Entra ID**
+
+   - User attempts to access protected route
+   - System redirects to Microsoft Entra ID login page
+   - Entra ID authenticates the user and returns an authorization code
+   - The authorization code is exchanged for tokens:
+     - **ID Token**: Contains user identity information
+     - **Access Token**: For accessing protected resources
+     - **Refresh Token**: For obtaining new tokens without re-authentication
+
+2. **Token Management**
+
+   - All tokens are stored server-side in Redis sessions
+   - Access tokens are refreshed before they expire
+   - Tokens are never exposed to the client browser
+
+3. **Session Management**
+
+   - Express session middleware with Redis store
+   - Secure HTTPOnly cookies for session identification
+   - Session contains user identity and authentication state
+   - Roles stored in session for authorization checks
+
+4. **API Authorization**
+   - Authenticated requests to .NET API include authorization header
+   - API validates the token signature and claims
+   - Role-based access control for protected endpoints
+
+### MSAL Distributed Cache with Redis
+
+The application implements Microsoft Authentication Library (MSAL) for Node.js with a custom Redis-backed distributed cache:
+
+- **DistributedCachePlugin**: Implements MSAL Node's plugin interface for caching
+- **Redis Cache**: Stores MSAL-specific cache entries like:
+  - Token cache (access and refresh tokens)
+  - Authority and cloud discovery metadata
+  - Account information
+- **Cache Partitioning**: Entries are partitioned by client/tenant IDs
+- **Persistence**: Cache survives application restarts, enabling reliable token refresh
+- **Scalability**: Supports multiple application instances sharing the same authentication state
+
+This implementation provides:
+
+- Improved token refresh reliability
+- Efficient handling of OIDC metadata caching
+- Performance optimization for token operations
+- Better security through isolation of token storage
 
 ## Session Management
 
-This project uses a Redis-backed session store to securely manage authentication state across the application:
+The project uses Express with Redis-backed sessions to securely manage authentication state:
 
-- **Redis Session Storage**: Ensures session persistence and scalability
-- **Express Session Middleware**: Handles session lifecycle and cookie management
-- **Secure Session Cookies**: HTTPOnly, Secure cookies prevent client-side access
-- **Consistent Authentication State**: Single source of truth for auth status
+- **Server-side Session Storage**: Redis ensures session persistence across server instances
+- **Secure Cookies**: HTTPOnly, Secure, and SameSite cookies prevent client-side access
+- **Session Encryption**: Data stored in sessions is encrypted
+- **Rolling Sessions**: Session expiry extends with activity
 
-## Monorepo Structure
+## Monorepo Structure and Modules
 
-The frontend is structured as a monorepo using PNPM workspaces with these key components:
+The frontend is structured as a monorepo using PNPM workspaces:
 
-### Modules
+### Core Authentication Module (@gc-fwcs/auth)
 
-The `@gc-fwcs` scoped packages provide reusable functionality across applications:
+The `@gc-fwcs/auth` module provides:
 
-- **@gc-fwcs/auth**: Microsoft Entra ID authentication using MSAL
-- **@gc-fwcs/express**: Express server utilities and middleware
-- **@gc-fwcs/helpers**: Common utility functions
-- **@gc-fwcs/logger**: Structured logging
-- **@gc-fwcs/session**: Redis-backed session management
-- **@gc-fwcs/tsconfig**: Shared TypeScript configurations
+- Microsoft Entra ID authentication using MSAL
+- PKCE (Proof Key for Code Exchange) flow for secure authentication
+- Token acquisition, caching, and refresh
+- Session-based authentication state management
 
-### Frontend Application
+### Supporting Modules
 
-The `auth-with-reactrouter` application demonstrates a complete authentication implementation including:
+- **@gc-fwcs/session**: Redis-backed session management with secure defaults
+- **@gc-fwcs/express**: Express server utilities including middleware integration
+- **@gc-fwcs/helpers**: Utility functions for error handling, validation, etc.
+- **@gc-fwcs/logger**: Structured logging for application monitoring
 
-- Protected routes with authentication guards
-- Login/logout flows
-- Token refresh handling
-- Error handling for authentication failures
+## Security Model
+
+This architecture implements these security principles:
+
+1. **Zero Token Exposure**: Tokens are never exposed to client-side JavaScript
+2. **Defense in Depth**: Multiple layers of validation throughout the stack
+3. **Principle of Least Privilege**: Minimal permissions in access tokens
+4. **Fresh Authentication**: Tokens refreshed regularly to maintain security
+5. **No Client State**: Authentication state never stored in browser storage
+
+## Protected Routes
+
+The application implements protection at multiple levels:
+
+1. **Route Protection**:
+
+   - Routes requiring authentication redirect unauthenticated users to login
+   - Role-based route access checks server-side before rendering
+   - Client-side route guards provide redundant protection
+
+2. **API Authorization**:
+   - API endpoints require valid tokens
+   - Role-based permissions verified on each request
+   - Token validation with proper signature checks
 
 ## Getting Started
 
@@ -96,33 +147,31 @@ The `auth-with-reactrouter` application demonstrates a complete authentication i
 - .NET 7.0 SDK
 - Redis server (for session storage)
 
-### Setup
+### Environment Setup
 
-1. Clone the repository
-2. Configure environment variables:
+Create appropriate environment files with these configurations:
 
-#### Backend
+#### Backend (.NET)
 
-```
-cd backend
-```
-
-Create an `appsettings.Development.json` file with your Entra ID configuration.
-
-#### Frontend
-
-```
-cd frontend
+```json
+{
+  "Authentication": {
+    "Authority": "https://login.microsoftonline.com/{your-tenant-id}",
+    "ClientId": "{your-api-client-id}",
+    "Audience": "{your-api-client-id}"
+  }
+}
 ```
 
-Create a `.env` file in the `apps/auth-with-reactrouter` directory with:
+#### Frontend (Remix)
 
 ```
 AZURE_AD_TENANT_ID=your-tenant-id
 AZURE_AD_CLIENT_ID=your-client-id
 AZURE_AD_CLIENT_SECRET=your-client-secret
 REDIS_URL=redis://localhost:6379
-SESSION_SECRET=your-session-secret
+SESSION_SECRET=your-secure-random-secret
+BASE_URL=http://localhost:3000
 ```
 
 ### Running the Application
@@ -142,17 +191,9 @@ pnpm install
 pnpm dev
 ```
 
-## Security Considerations
-
-- All tokens are kept server-side, never exposed to client JavaScript
-- Session cookies use HTTPOnly, Secure, and SameSite flags
-- PKCE flow protects against CSRF and authorization code interception
-- Automatic token refresh maintains session validity
-- API calls use short-lived tokens for authorization
-
 ## Learn More
 
-For more details on the authentication architecture, see the dedicated documentation:
+For deeper understanding of the authentication architecture:
 
-- [Authentication Architecture](docs/auth.md)
-- [Authentication Deep Research](docs/auth-deep-research.md)
+- [Authentication Architecture](docs/auth.md) - Detailed design explanation
+- [Authentication Deep Research](docs/auth-deep-research.md) - Technical research
