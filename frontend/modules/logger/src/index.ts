@@ -19,3 +19,7 @@ export {
     setCorrelationContext,
     withCorrelationId
 };
+
+
+// Export envvironment schema
+export { loggerEnvSchema } from './env.schema.ts';

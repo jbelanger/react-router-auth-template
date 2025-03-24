@@ -15,13 +15,13 @@ A flexible logging module that provides structured logging capabilities with sup
 
 ## Environment Variables
 
-| Variable                   | Description                   | Default   | Valid Values                                                   |
-| -------------------------- | ----------------------------- | --------- | -------------------------------------------------------------- |
-| `LOG_LEVEL`                | Logging level to use          | `'info'`  | `'audit'`, `'error'`, `'warn'`, `'info'`, `'debug'`, `'trace'` |
-| `AUDIT_LOG_ENABLED`        | Enable/disable audit logging  | `'true'`  | `'true'`, `'false'`                                            |
-| `AUDIT_LOG_DIRNAME`        | Directory for audit log files | `'logs'`  | Any valid directory path                                       |
-| `AUDIT_LOG_FILENAME`       | Base name for audit log files | `'audit'` | Any valid filename                                             |
-| `AUDIT_LOG_RETENTION_DAYS` | Days to retain audit logs     | `'30'`    | Any positive integer                                           |
+| Variable                          | Description                   | Default   | Valid Values                                                   |
+| --------------------------------- | ----------------------------- | --------- | -------------------------------------------------------------- |
+| `LOGGER_LOG_LEVEL`                | Logging level to use          | `'info'`  | `'audit'`, `'error'`, `'warn'`, `'info'`, `'debug'`, `'trace'` |
+| `LOGGER_AUDIT_LOG_ENABLED`        | Enable/disable audit logging  | `'true'`  | `'true'`, `'false'`                                            |
+| `LOGGER_AUDIT_LOG_DIRNAME`        | Directory for audit log files | `'logs'`  | Any valid directory path                                       |
+| `LOGGER_AUDIT_LOG_FILENAME`       | Base name for audit log files | `'audit'` | Any valid filename                                             |
+| `LOGGER_AUDIT_LOG_RETENTION_DAYS` | Days to retain audit logs     | `'30'`    | Any positive integer                                           |
 
 ## API Reference
 

@@ -1,58 +1,11 @@
 import pino from 'pino';
 import os from 'node:os';
 import fs from 'node:fs';
-import { z } from 'zod';
 import { getCurrentCorrelationId } from './correlation.ts';
+import { logLevelsSchema, validateLoggerEnv } from './env.schema.ts';
 
-
-
-// Define log levels, including a custom 'audit' level
-const logLevels = {
-    audit: 5,
-    error: 50,
-    warn: 40,
-    info: 30,
-    debug: 20,
-    trace: 10,
-} as const;
-
-const env = {
-    logLevel: z //
-        .string()
-        .refine((val: string) => Object.keys(logLevels).includes(val), { message: 'Invalid log level' })
-        .default('info')
-        .parse(process.env.LOG_LEVEL),
-    auditLogEnabled: z //
-        .string()
-        .transform((val: string) => val === 'true')
-        .default('true')
-        .parse(process.env.AUDIT_LOG_ENABLED),
-    auditLogDirname: z //
-        .string()
-        .trim()
-        .min(1, { message: 'Invalid audit log directory name' })
-        .default('logs')
-        .parse(process.env.AUDIT_LOG_DIRNAME),
-    auditLogFilename: z //
-        .string()
-        .trim()
-        .min(1, { message: 'Invalid audit log file name' })
-        .default('audit')
-        .parse(process.env.AUDIT_LOG_FILENAME),
-    auditLogRetentionDays: z //
-        .string()
-        .transform((val: string) => parseInt(val, 10))
-        .default('30')
-        .parse(process.env.AUDIT_LOG_RETENTION_DAYS),
-    nodeEnv: z //
-        .string()
-        .default('development')
-        .parse(process.env.NODE_ENV),
-    serviceName: z //
-        .string()
-        .default('frontend-service')
-        .parse(process.env.SERVICE_NAME),
-} as const;
+// Validate environment variables
+const env = validateLoggerEnv(process.env);
 
 /**
  * Formats a log label string to be a fixed length. When the label string
@@ -89,7 +42,7 @@ function ensureLogDirExists(dirPath: string) {
  */
 function createRootLogger(): Logger {
     // Ensure the log directory exists
-    ensureLogDirExists(env.auditLogDirname);
+    ensureLogDirExists(env.LOGGER_AUDIT_LOG_DIRNAME);
 
     // Define a more flexible transport target type
     type TransportTarget = {
@@ -102,7 +55,7 @@ function createRootLogger(): Logger {
     const transportTargets: TransportTarget[] = [];
 
     // In development, use pino-pretty for human-readable logs
-    if (env.nodeEnv === 'development') {
+    if (env.NODE_ENV === 'development') {
         transportTargets.push({
             level: 'trace',
             target: 'pino-pretty',
@@ -110,7 +63,7 @@ function createRootLogger(): Logger {
                 colorize: true,
                 translateTime: 'yyyy-mm-dd HH:MM:ss.l',
                 messageFormat: '[{categoryLabel}]: {msg}',
-                customLevels: logLevels,
+                customLevels: logLevelsSchema,
                 customColors: 'info:blue,error:red,warn:yellow,debug:green',
                 useOnlyCustomLevels: true,
                 ignore: 'pid,hostname,category,categoryLabel,service,environment,correlationId',
@@ -132,32 +85,31 @@ function createRootLogger(): Logger {
     }
 
     // Add audit log transport if enabled (same for both environments)
-    if (env.auditLogEnabled) {
+    if (env.LOGGER_AUDIT_LOG_ENABLED) {
         transportTargets.push({
             level: 'audit',
             target: 'pino-roll',
             options: {
-                file: `./${env.auditLogDirname}/${env.auditLogFilename}_${os.hostname()}.log`,
+                file: `./${env.LOGGER_AUDIT_LOG_DIRNAME}/${env.LOGGER_AUDIT_LOG_FILENAME}_${os.hostname()}.log`,
                 frequency: 'daily',
                 mkdir: true,
                 size: '10M',
-                max: env.auditLogRetentionDays,
+                max: env.LOGGER_AUDIT_LOG_RETENTION_DAYS,
             }
         });
     }
 
     // Create the Pino logger with standard configuration
     const pinoConfig: pino.LoggerOptions<'audit'> = {
-        level: env.logLevel,
-        customLevels: logLevels,
+        level: env.LOGGER_LOG_LEVEL.toLowerCase(),
+        customLevels: logLevelsSchema,
         useOnlyCustomLevels: true,
         timestamp: pino.stdTimeFunctions.isoTime,
         base: {
-            // Include standard context metadata following common practices
             hostname: os.hostname(),
             pid: process.pid,
-            service: env.serviceName,
-            environment: env.nodeEnv
+            service: env.LOGGER_SERVICE_NAME,
+            environment: env.NODE_ENV
         },
         // Add correlation ID to all log entries if available
         mixin: () => {

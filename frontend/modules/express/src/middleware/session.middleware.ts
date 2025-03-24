@@ -29,7 +29,7 @@ const DEFAULT_CONFIG: Partial<SessionConfig> = {
 export type SessionStorageType = 'memory' | 'redis';
 
 /** Cookie same-site policy options */
-export type SameSiteMode = 'lax' | 'strict';
+export type SameSiteMode = 'lax' | 'strict' | 'none';
 
 /**
  * Cookie configuration options.
