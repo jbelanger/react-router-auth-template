@@ -11,7 +11,25 @@ import { reactRouterRequestHandler } from './handlers.ts';
 import { createSessionMiddleware } from './middleware/session.middleware.ts';
 import type { SessionConfig } from './middleware/session.middleware.ts';
 import { globalErrorMiddleware } from './middleware/error.middleware.ts';
+import { Session } from '@gc-fwcs/session';
 
+declare namespace Express {
+        interface Request {
+            correlationId: string;
+        }
+    }
+    
+    
+    declare module 'react-router' {
+        interface AppLoadContext {
+            /** Type-safe session manager */
+            session: Session;
+            /** Correlation ID for request tracing */
+            correlationId: string;
+        }
+    }
+
+    
 /** Valid Node environment modes */
 export type NodeEnv = 'development' | 'production';
 

@@ -1,7 +1,10 @@
 import { createMsalProvider } from '@gc-fwcs/auth';
 import { createExpressApp } from '@gc-fwcs/express';
+import { getI18nRouteHelper } from '@gc-fwcs/i18n';
 import { createRedisCacheClient } from '@gc-fwcs/session';
+import routes from '~/routes';
 import { getServerEnv } from '~/utils/env.utils';
+import { i18nRoutes } from './routes';
 
 const env = getServerEnv();
 const isProduction = env.NODE_ENV === 'production';
@@ -53,3 +56,6 @@ export const expressServer = await createExpressApp({
         ],
     reactRouterEntryPoint: 'index.js',
 });
+
+
+export const i18nRouter = getI18nRouteHelper(i18nRoutes);
