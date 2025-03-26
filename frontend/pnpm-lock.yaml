@@ -195,6 +195,40 @@ importers:
         specifier: workspace:*
         version: link:../tsconfig
 
+  modules/i18n:
+    dependencies:
+      '@gc-fwcs/helpers':
+        specifier: workspace:*
+        version: link:../helpers
+      '@gc-fwcs/logger':
+        specifier: workspace:*
+        version: link:../logger
+      connect-redis:
+        specifier: ^7.1.0
+        version: 7.1.1(express-session@1.18.1)
+      express:
+        specifier: ^4.21.2
+        version: 4.21.2
+      express-session:
+        specifier: ^1.18.1
+        version: 1.18.1
+      redis:
+        specifier: ^4.7.0
+        version: 4.7.0
+      validator:
+        specifier: ^13.12.0
+        version: 13.12.0
+    devDependencies:
+      '@types/express':
+        specifier: ^5.0.0
+        version: 5.0.0
+      '@types/express-session':
+        specifier: ^1.18.1
+        version: 1.18.1
+      tsconfig:
+        specifier: workspace:*
+        version: link:../tsconfig
+
   modules/logger:
     dependencies:
       logform:

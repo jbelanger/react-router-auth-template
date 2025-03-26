@@ -1,6 +1,6 @@
 import { Outlet, useLoaderData } from "react-router-dom";
 import { Navigate } from "react-router-dom";
-import type { UserData } from "../../../types";
+import type { UserData } from "../../types/user-data";
 
 import type { Route } from "./+types/_layout";
 import { ensureUserAuthenticated } from "~/utils/auth.utils.server";

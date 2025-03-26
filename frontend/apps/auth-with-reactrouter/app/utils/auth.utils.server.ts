@@ -1,8 +1,8 @@
 import type { Session } from '@gc-fwcs/session';
 import { redirectDocument } from 'react-router-dom';
-import type { UserData } from 'types';
 import { authProvider } from '~/.server/configuration/dependencies';
 import { jwtVerify } from "jose";
+import type { UserData } from '~/types/user-data';
 
 /**
  * Initiates the authentication flow by attempting token refresh or redirecting to login
