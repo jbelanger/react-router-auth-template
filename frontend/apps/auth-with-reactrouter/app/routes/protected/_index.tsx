@@ -1,7 +1,7 @@
+import { I18nLink } from "@gc-fwcs/i18n/routing";
 import type { Route } from "../+types/_index";
 import { ensureUserAuthenticated } from "../../utils/auth.utils.server";
 import { useLoaderData, Link } from "react-router";
-import { I18nLink } from '@gc-fwcs/i18n';
 
 export async function loader({ context, request }: Route.LoaderArgs) {
   const user = await ensureUserAuthenticated(context.session, request);

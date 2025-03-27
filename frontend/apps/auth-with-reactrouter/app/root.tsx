@@ -8,12 +8,8 @@ import {
 } from "react-router";
 
 import type { Route } from "./+types/root";
-import { I18nRoutesProvider, initializeI18nRoutes } from "@gc-fwcs/i18n";
+import { I18nRoutesProvider } from "@gc-fwcs/i18n/routing";
 import i18nRoutes from "./routes";
-// import "./tailwind.css";
-
-// Initialize routes once at the app root
-initializeI18nRoutes(i18nRoutes);
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -48,7 +44,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <I18nRoutesProvider>
+    <I18nRoutesProvider routes={i18nRoutes}>
       <Outlet />
     </I18nRoutesProvider>
   );
