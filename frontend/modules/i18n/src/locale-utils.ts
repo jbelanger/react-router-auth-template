@@ -3,8 +3,13 @@ import { createInstance } from 'i18next';
 // import I18NextHttpBackend from 'i18next-http-backend';
 // import { initReactI18next } from 'react-i18next';
 import { getEnv } from './env.schema.ts';
-import { i18nNamespacesSchema, RouteHandleData } from './index.ts';
+import { i18nNamespacesSchema } from './index.ts';
+import { useLocation } from 'react-router';
+import { findRouteByPathname, ExtendedRouteConfigEntry, useRoutes } from './routing/routes-utils.tsx';
+import { getLogger } from '@gc-fwcs/logger';
+import { RouteConfigEntry } from '@react-router/dev/routes';
 
+const log = getLogger('i18n/use-current-language');
 
 /**
  * A constant array representing the supported application locales.
@@ -47,61 +52,61 @@ export function getAltLanguage(language: string): AppLocale {
 }
 
 /**
- * Extracts the language code from a given resource.
+ * A hook that returns the current language and its alternate language.
  *
- * @param resource - The resource to extract the language from.
- * @returns The language code ('en' or 'fr') if found, otherwise undefined.
- * @throws {Error} If the language code cannot be determined.
+ * @returns An object containing the current language the alternate language.
+ * @throws {Error} If no language can be detected for the current route.
  */
-export function getLanguage(resource: Request | URL | string): AppLocale {
-  switch (true) {
-    case resource instanceof Request: {
-      return getLanguageFromPathname(new URL(resource.url).pathname);
-    }
-
-    case resource instanceof URL: {
-      return getLanguageFromPathname(resource.pathname);
-    }
-
-    default: {
-      return getLanguageFromPathname(resource);
-    }
-  }
+export function useCurrentLanguage(): AppLocale {
+  const { pathname } = useLocation();
+  const routes = useRoutes();
+  return getLanguage(pathname, routes);
 }
 
-function getLanguageFromPathname(pathname: string): AppLocale {
+export function getLanguage(resource: Request | URL | string, routes: RouteConfigEntry[]): AppLocale {
+  let pathname: string;
   switch (true) {
-    case pathname === '/en' || pathname.startsWith('/en/'): {
-      return 'en';
+    case resource instanceof Request: {
+      pathname = new URL(resource.url).pathname;
+      break;
     }
-
-    case pathname === '/fr' || pathname.startsWith('/fr/'): {
-      return 'fr';
+    case resource instanceof URL: {
+      pathname = (resource as URL).pathname;
+      break;
     }
-
     default: {
-      throw new Error(`Could not determine language for pathname: ${pathname}.`);
+      pathname = resource as string;
     }
   }
+
+  const r = findRouteByPathname(routes, pathname);
+  if(r) {
+    const currentLanguage = (r as ExtendedRouteConfigEntry).lang;
+    return currentLanguage;
+  }
+  // If no route matches the pathname, we can use the default language
+  // from the URL. This is a fallback and should be handled more gracefully.
+  log.warn(`No route found for pathname: ${pathname}. Falling back to default language.`);
+  return { currentLanguage: 'en', altLanguage: 'fr' };
 }
 
 /**
  * Returns all namespaces required by the given routes by examining the route's i18nNamespaces handle property.
  * @see https://remix.run/docs/en/main/route/handle
  */
-export function getNamespaces(routes?: ({ handle?: unknown } | undefined)[]) {
-  if (routes === undefined) {
-    return [];
-  }
+// export function getNamespaces(routes?: ({ handle?: unknown } | undefined)[]) {
+//   if (routes === undefined) {
+//     return [];
+//   }
 
-  const namespaces = routes
-    .map((route) => route?.handle as RouteHandleData | undefined)
-    .map((handle) => i18nNamespacesSchema.safeParse(handle?.i18nNamespaces))
-    .flatMap((result) => (result.success ? result.data : undefined))
-    .filter((i18nNamespaces) => i18nNamespaces !== undefined);
+//   const namespaces = routes
+//     .map((route) => route?.handle as RouteHandleData | undefined)
+//     .map((handle) => i18nNamespacesSchema.safeParse(handle?.i18nNamespaces))
+//     .flatMap((result) => (result.success ? result.data : undefined))
+//     .filter((i18nNamespaces) => i18nNamespaces !== undefined);
 
-  return [...new Set(namespaces)];
-}
+//   return [...new Set(namespaces)];
+// }
 
 /**
  * Initializes the client instance of i18next.

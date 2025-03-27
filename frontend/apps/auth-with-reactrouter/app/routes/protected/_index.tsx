@@ -2,10 +2,20 @@ import { I18nLink } from "@gc-fwcs/i18n/routing";
 import type { Route } from "../+types/_index";
 import { ensureUserAuthenticated } from "../../utils/auth.utils.server";
 import { useLoaderData, Link } from "react-router";
+import { useCurrentLanguage, getLanguage } from "@gc-fwcs/i18n";
+import i18nRoutes from "~/routes";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
   const user = await ensureUserAuthenticated(context.session, request);
 
+  const ll = getLanguage(request, i18nRoutes);
+  if(!ll) {
+    throw new Error("Could not determine language from request.");
+  }
+  else
+  {
+    console.log("Current language:", ll);
+  }
   return {
     isAuthenticated: !!user,
     user: user ? {
@@ -28,6 +38,9 @@ export function meta({ }: Route.MetaArgs) {
 
 export default function Index() {
   const { isAuthenticated, user, claims } = useLoaderData<typeof loader>();
+  // const lang = useCurrentLanguage();
+  // console.log("Current language:", lang.currentLanguage);
+  
 
   return (
     <div className="p-8">

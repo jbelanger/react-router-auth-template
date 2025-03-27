@@ -9,6 +9,7 @@ export {
   findRouteById,
   i18nRoute,
   I18nRoutesProvider,
+  useRoutes,
   useRouteById,
   useI18nNamespaces
 } from './routes-utils.tsx';

@@ -1,6 +1,5 @@
-import type { RouteConfigEntry } from "@react-router/dev/routes";
-
 export interface RouteHandleData {
   i18nNamespaces?: string[];
+  lang?: string;
   [key: string]: unknown;
 }

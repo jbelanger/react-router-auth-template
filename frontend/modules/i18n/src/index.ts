@@ -13,3 +13,5 @@ export const i18nNamespacesSchema = z
 
 // Re-export routing features
 //export * from './routing/index.ts';
+
+export { useCurrentLanguage, getLanguage } from './locale-utils.ts';
