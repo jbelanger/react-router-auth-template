@@ -1,6 +1,6 @@
+import { setCorrelationContext } from '@gc-fwcs/logger/server';
 import type { RequestHandler } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { setCorrelationContext } from '@gc-fwcs/logger';
 
 /**
  * Creates middleware that adds correlation ID tracking to all requests.

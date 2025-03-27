@@ -12,49 +12,49 @@ builder.Services.AddControllers();
 // Configure authentication with multiple schemes
 builder.Services.AddAuthentication()
     // Configure Azure AD authentication for validating incoming Microsoft tokens
-    //.AddJwtBearer("AzureAd", options =>
-    //{
-    //    var tenantId = builder.Configuration["AzureAd:TenantId"];
-    //    var clientId = builder.Configuration["AzureAd:ClientId"];
+    .AddJwtBearer("AzureAd", options =>
+    {
+        var tenantId = builder.Configuration["AzureAd:TenantId"];
+        var clientId = builder.Configuration["AzureAd:ClientId"];
 
-    //    options.MetadataAddress = $"https://login.microsoftonline.com/{tenantId}/v2.0/.well-known/openid-configuration";
-    //    options.Authority = $"https://login.microsoftonline.com/{tenantId}/v2.0";
-    //    options.RequireHttpsMetadata = true;
-    //    options.SaveToken = true;
-    //    options.TokenValidationParameters = new TokenValidationParameters
-    //    {
-    //        ValidateIssuerSigningKey = true,
-    //        ValidateIssuer = true,
-    //        ValidateAudience = true,
-    //        ValidateLifetime = true,
-    //        ValidIssuers = new[] {
-    //            $"https://login.microsoftonline.com/{tenantId}/v2.0",
-    //            $"https://sts.windows.net/{tenantId}/"
-    //        },
-    //        ValidAudiences = new[] {
-    //            clientId,                   // Application ID URI
-    //            $"api://{clientId}",        // API URL format
-    //            $"https://{clientId}"       // Alternative format
-    //        }
-    //    };
+        options.MetadataAddress = $"https://login.microsoftonline.com/{tenantId}/v2.0/.well-known/openid-configuration";
+        options.Authority = $"https://login.microsoftonline.com/{tenantId}/v2.0";
+        options.RequireHttpsMetadata = true;
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidIssuers = new[] {
+               $"https://login.microsoftonline.com/{tenantId}/v2.0",
+               $"https://sts.windows.net/{tenantId}/"
+           },
+            ValidAudiences = new[] {
+               clientId,                   // Application ID URI
+               $"api://{clientId}",        // API URL format
+               $"https://{clientId}"       // Alternative format
+           }
+        };
 
-    //    // Add event handlers for debugging token validation
-    //    options.Events = new JwtBearerEvents
-    //    {
-    //        OnAuthenticationFailed = context =>
-    //        {
-    //            var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
-    //            logger.LogError("Authentication failed: {Error}", context.Exception);
-    //            return Task.CompletedTask;
-    //        },
-    //        OnTokenValidated = context =>
-    //        {
-    //            var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
-    //            logger.LogInformation("Token validated successfully");
-    //            return Task.CompletedTask;
-    //        }
-    //    };
-    //})
+        // Add event handlers for debugging token validation
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                logger.LogError("Authentication failed: {Error}", context.Exception);
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                logger.LogInformation("Token validated successfully");
+                return Task.CompletedTask;
+            }
+        };
+    })
     // Configure our own JWT authentication for enriched tokens
     .AddJwtBearer("JWT", options =>
     {

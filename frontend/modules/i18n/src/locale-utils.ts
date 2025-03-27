@@ -1,15 +1,8 @@
-import type { FlatNamespace, LanguageDetectorModule } from 'i18next';
-import { createInstance } from 'i18next';
-// import I18NextHttpBackend from 'i18next-http-backend';
-// import { initReactI18next } from 'react-i18next';
-import { getEnv } from './env.schema.ts';
-import { i18nNamespacesSchema } from './index.ts';
+import type { FlatNamespace } from 'i18next';
 import { useLocation } from 'react-router';
 import { findRouteByPathname, ExtendedRouteConfigEntry, useRoutes } from './routing/routes-utils.tsx';
-import { getLogger } from '@gc-fwcs/logger';
 import { RouteConfigEntry } from '@react-router/dev/routes';
 
-const log = getLogger('i18n/use-current-language');
 
 /**
  * A constant array representing the supported application locales.
@@ -57,37 +50,43 @@ export function getAltLanguage(language: string): AppLocale {
  * @returns An object containing the current language the alternate language.
  * @throws {Error} If no language can be detected for the current route.
  */
+/**
+ * A hook that returns the current language from the route.
+ *
+ * @returns The current language as AppLocale ('en' | 'fr')
+ * @throws {Error} When no route is found
+ */
 export function useCurrentLanguage(): AppLocale {
   const { pathname } = useLocation();
   const routes = useRoutes();
-  return getLanguage(pathname, routes);
+  return getLanguage(pathname, routes, false);
 }
 
-export function getLanguage(resource: Request | URL | string, routes: RouteConfigEntry[]): AppLocale {
-  let pathname: string;
-  switch (true) {
-    case resource instanceof Request: {
-      pathname = new URL(resource.url).pathname;
-      break;
-    }
-    case resource instanceof URL: {
-      pathname = (resource as URL).pathname;
-      break;
-    }
-    default: {
-      pathname = resource as string;
-    }
+/**
+ * Extracts the language from a route based on the given resource path.
+ *
+ * @param resource - The resource from which to extract the pathname (Request, URL, or string path)
+ * @param routes - Array of route configurations to search through
+ * @param fallback - Whether to fallback to 'en' (false) or throw an error (true) when no route is found
+ * @returns The detected language as AppLocale ('en' | 'fr')
+ * @throws {Error} When no route is found and fallback is true
+ */
+export function getLanguage(resource: Request | URL | string, routes: RouteConfigEntry[], fallback: boolean = true): AppLocale {
+  const pathname = resource instanceof Request ? new URL(resource.url).pathname :
+                  resource instanceof URL ? resource.pathname :
+                  resource;
+  
+  const route = findRouteByPathname(routes, pathname);
+  if (route) {
+    return (route as ExtendedRouteConfigEntry).lang;
+  }
+  
+  console.error(`No route found for pathname: ${pathname}`);
+  if (!fallback) {
+    throw new Error(`No route found for pathname: ${pathname}`);
   }
 
-  const r = findRouteByPathname(routes, pathname);
-  if(r) {
-    const currentLanguage = (r as ExtendedRouteConfigEntry).lang;
-    return currentLanguage;
-  }
-  // If no route matches the pathname, we can use the default language
-  // from the URL. This is a fallback and should be handled more gracefully.
-  log.warn(`No route found for pathname: ${pathname}. Falling back to default language.`);
-  return { currentLanguage: 'en', altLanguage: 'fr' };
+  return 'en';
 }
 
 /**

@@ -1,10 +1,3 @@
-// declare namespace Express {
-//     interface Request {
-//         correlationId: string;
-//     }
-// }
-
-
 // declare module 'react-router' {
 //     interface AppLoadContext {
 //         /** Type-safe session manager */

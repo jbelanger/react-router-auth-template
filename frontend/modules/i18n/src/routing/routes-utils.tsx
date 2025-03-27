@@ -2,13 +2,11 @@ import { createContext, useContext, ReactNode } from 'react';
 import { useMatches } from 'react-router';
 import type { RouteHandleData } from './types.ts';
 import { route, RouteConfigEntry } from '@react-router/dev/routes';
-import {getLogger} from '@gc-fwcs/logger';
 
 export type ExtendedRouteConfigEntry = RouteConfigEntry & {
   lang: string;
 };
 
-const log = getLogger('i18n/routes-utils');
 const RoutesContext = createContext<RouteConfigEntry[]>([]);
 
 
@@ -93,11 +91,14 @@ export function i18nRoute(enPath: string, frPath: string, file: string, children
 
     // Ensure paths begins with /:lang, /en or /fr so that i18n translation can detect the current language from the route
     if (!enPath.startsWith('/en') && !enPath.startsWith('/fr') && !enPath.startsWith('/:lang')) {
-      log.warn(`Path "${enPath}" does not start with "/en", "/fr" or "/:lang". This will cause issues with i18n language detection.`);
+      console.log(`Path "${enPath}" does not start with "/en", "/fr" or "/:lang". This will cause issues with i18n language detection.`);
     }
 
     return [
       { ...route(normalizedEnPath, file, { id: `${normalizedEnPath}-en` }, children), lang: 'en' },
-      { ...route(normalizedFrPath, file, { id: `${normalizedFrPath}-fr` }, children), lang: 'fr' }
+      // The id of the french route has the same id as the english route, but with "-fr" suffix
+      // This is to allow the i18n links to find the proper route based on the english link.
+      // The i18nlink should always have the "to" prop set to the english route id.
+      { ...route(normalizedFrPath, file, { id: `${normalizedEnPath}-fr` }, children), lang: 'fr' }
     ] as ExtendedRouteConfigEntry[];
   }

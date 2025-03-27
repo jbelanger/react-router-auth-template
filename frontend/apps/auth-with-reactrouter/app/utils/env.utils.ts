@@ -1,4 +1,3 @@
-import { loggerEnvSchema } from '@gc-fwcs/logger';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 

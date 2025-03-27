@@ -6,7 +6,6 @@ import { createViteDevServer } from './vite.server.ts';
 import { getLogger } from '@gc-fwcs/logger';
 import { securityHeaders } from './middleware/security.middleware.ts';
 import { logging } from './middleware/logging.middleware.ts';
-import { createCorrelationMiddleware } from './middleware/correlation.middleware.ts';
 import { reactRouterRequestHandler } from './handlers.ts';
 import { createSessionMiddleware } from './middleware/session.middleware.ts';
 import type { SessionConfig } from './middleware/session.middleware.ts';
@@ -215,9 +214,6 @@ export async function createExpressApp(
     app.disable('x-powered-by');
 
     log.info(' ‼️  configuring express middlewares...');
-
-    log.info('    ✓ correlation ID middleware');
-    app.use(createCorrelationMiddleware());
 
     log.info('    ✓ compression middleware');
     app.use(compression());

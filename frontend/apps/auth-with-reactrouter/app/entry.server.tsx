@@ -6,6 +6,42 @@ import { ServerRouter } from "react-router";
 import { isbot } from "isbot";
 import type { RenderToPipeableStreamOptions } from "react-dom/server";
 import { renderToPipeableStream } from "react-dom/server";
+import commonEn from '~/../public/locales/en/common.json';
+import commonFr from '~/../public/locales/fr/common.json';
+import { createInstance } from "i18next";
+import { I18nextProvider, initReactI18next } from "react-i18next";
+import { getLanguage } from "@gc-fwcs/i18n";
+import i18nRoutes from "./routes";
+
+// Server-side i18n initialization
+export async function initServerI18n(locale = 'en') {
+  const i18n = createInstance();
+  
+  await i18n
+    .use(initReactI18next)
+    .init({
+      lng: locale,
+      fallbackLng: 'en',
+      supportedLngs: ['en', 'fr'],
+      defaultNS: 'common',
+      interpolation: {
+        escapeValue: false,
+      },
+      resources: {
+        en: {
+          common: commonEn,
+        },
+        fr: {
+          common: commonFr,
+        },
+      },
+      react: {
+        useSuspense: false,
+      },
+    });
+
+  return i18n;
+}
 
 export const streamTimeout = 5_000;
 
@@ -22,7 +58,7 @@ export const handleError: HandleErrorFunction = (
   }
 };
 
-export default function handleRequest(
+export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
@@ -31,6 +67,10 @@ export default function handleRequest(
   // If you have middleware enabled:
   // loadContext: unstable_RouterContextProvider
 ) {
+
+  const locale = getLanguage(request, i18nRoutes);
+  const i18n = await initServerI18n(locale);
+
   return new Promise((resolve, reject) => {
     let shellRendered = false;
     let userAgent = request.headers.get("user-agent");
@@ -43,7 +83,9 @@ export default function handleRequest(
         : "onShellReady";
 
     const { pipe, abort } = renderToPipeableStream(
-      <ServerRouter context={routerContext} url={request.url} />,
+      <I18nextProvider i18n={i18n}>
+      <ServerRouter context={routerContext} url={request.url} />
+      </I18nextProvider>,
       {
         [readyOption]() {
           shellRendered = true;

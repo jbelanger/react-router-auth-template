@@ -2,6 +2,8 @@ import { hasAuthorizationRole, ensureUserHasApiAccess } from "../../utils/auth.u
 import { useEffect, useState } from "react";
 import type { Route } from "./+types/_protected.protected";
 import { useLoaderData } from "react-router";
+import { useTranslation } from "react-i18next";
+import { useCurrentLanguage } from "@gc-fwcs/i18n";
 
 
 export async function loader({ context, request }: Route.LoaderArgs) {
@@ -28,6 +30,9 @@ export default function ProtectedPage() {
     const [apiData, setApiData] = useState<unknown>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const currLang = useCurrentLanguage();
+      const { t } = useTranslation();
+    
 
     // This function simulates calling an API using the enriched token
     useEffect(() => {
@@ -60,7 +65,7 @@ export default function ProtectedPage() {
 
     return (
         <div className="p-8">
-            <h1 className="text-3xl font-bold mb-6">Protected Content</h1>
+            <h1 className="text-3xl font-bold mb-6">{ t("Protected Content")}</h1>
 
             <div className="bg-green-900/30 border border-green-700 text-green-100 p-4 rounded mb-6">
                 <p className="font-bold">User Details</p>

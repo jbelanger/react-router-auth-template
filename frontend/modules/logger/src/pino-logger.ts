@@ -1,7 +1,6 @@
 import pino from 'pino';
 import os from 'node:os';
 import fs from 'node:fs';
-import { getCurrentCorrelationId } from './correlation.ts';
 import { logLevelsSchema, validateLoggerEnv } from './env.schema.ts';
 
 // Validate environment variables
@@ -110,11 +109,6 @@ function createRootLogger(): Logger {
             pid: process.pid,
             service: env.LOGGER_SERVICE_NAME,
             environment: env.NODE_ENV
-        },
-        // Add correlation ID to all log entries if available
-        mixin: () => {
-            const correlationId = getCurrentCorrelationId();
-            return correlationId ? { correlationId } : {};
         }
     };
 

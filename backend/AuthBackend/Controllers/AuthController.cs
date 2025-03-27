@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using AuthBackend.Models;
 using AuthBackend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -19,7 +20,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("enrich-token")]
-    //[Authorize(AuthenticationSchemes = "AzureAd")]
+    [Authorize(AuthenticationSchemes = "AzureAd")]
     public IActionResult EnrichToken()
     {
         try
@@ -32,16 +33,16 @@ public class AuthController : ControllerBase
             }
 
             // Get and validate required claims
-            var sub = User.FindFirst("oid")?.Value ?? User.FindFirst("sub")?.Value;
-            var name = User.FindFirst("name")?.Value ?? User.FindFirst("preferred_username")?.Value;
-            var email = User.FindFirst("upn")?.Value ?? User.FindFirst("preferred_username")?.Value;
-            var tenantId = User.FindFirst("tid")?.Value;
+            var sub = User.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier")?.Value ?? User.FindFirst("sub")?.Value;
+            var name = User.FindFirst(ClaimTypes.Name)?.Value ?? User.FindFirst("preferred_username")?.Value;
+            var email = User.FindFirst(ClaimTypes.Email)?.Value ?? User.FindFirst("preferred_username")?.Value;
+            //var tenantId = User.FindFirst(ClaimTypes)?.Value;
 
-            if (string.IsNullOrEmpty(sub) || string.IsNullOrEmpty(tenantId))
-            {
-                _logger.LogError("Missing required claims. Subject: {Sub}, TenantId: {TenantId}", sub, tenantId);
-                return BadRequest("Missing required claims from Azure AD token");
-            }
+            // if (string.IsNullOrEmpty(sub) || string.IsNullOrEmpty(tenantId))
+            // {
+            //     _logger.LogError("Missing required claims. Subject: {Sub}, TenantId: {TenantId}", sub, tenantId);
+            //     return BadRequest("Missing required claims from Azure AD token");
+            // }
 
             // Get the validated user claims from the Azure AD token and map to our model
             var userClaims = new UserClaims
@@ -49,7 +50,7 @@ public class AuthController : ControllerBase
                 Sub = sub,
                 Name = name ?? string.Empty,
                 Email = email ?? string.Empty,
-                TenantId = tenantId,
+                TenantId = "tenantId",
                 Roles = (User.FindAll("roles").Any()
                     ? User.FindAll("roles")
                     : User.FindAll("http://schemas.microsoft.com/ws/2008/06/identity/claims/role"))
