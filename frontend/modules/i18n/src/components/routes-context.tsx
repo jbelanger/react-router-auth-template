@@ -1,6 +1,6 @@
 import { createContext, useContext, ReactNode } from 'react';
 import type { RouteConfigEntry } from "@react-router/dev/routes";
-import { routeRegistry } from './route-registry.ts';
+import { routeRegistry } from '../route-registry.ts';
 
 interface I18nRoutesContextValue {
   routes: RouteConfigEntry[];
@@ -14,11 +14,6 @@ interface I18nRoutesProviderProps {
 const I18nRoutesContext = createContext<I18nRoutesContextValue | null>(null);
 
 export function I18nRoutesProvider({ children }: I18nRoutesProviderProps) {
-  // Ensure routes have been initialized
-  if (routeRegistry.getRoutes().length === 0) {
-    throw new Error('Routes must be initialized before using I18nRoutesProvider. Call initializeI18nRoutes first.');
-  }
-
   return (
     <I18nRoutesContext.Provider 
       value={{

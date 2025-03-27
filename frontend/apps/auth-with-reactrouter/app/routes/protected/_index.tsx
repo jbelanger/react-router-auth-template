@@ -1,6 +1,7 @@
 import type { Route } from "../+types/_index";
 import { ensureUserAuthenticated } from "../../utils/auth.utils.server";
 import { useLoaderData, Link } from "react-router";
+import { I18nLink } from '@gc-fwcs/i18n';
 
 export async function loader({ context, request }: Route.LoaderArgs) {
   const user = await ensureUserAuthenticated(context.session, request);
@@ -60,12 +61,13 @@ export default function Index() {
           )}
 
           <div className="space-x-4">
-            <Link
+            <I18nLink
               to="/protected/backend"
+              lang="en"
               className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
             >
               Protected Page
-            </Link>
+            </I18nLink>
 
             <Link
               to="/auth/logout"

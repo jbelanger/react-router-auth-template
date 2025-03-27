@@ -1,7 +1,7 @@
 import type { FlatNamespace, LanguageDetectorModule } from 'i18next';
 import { createInstance } from 'i18next';
-import I18NextHttpBackend from 'i18next-http-backend';
-import { initReactI18next } from 'react-i18next';
+// import I18NextHttpBackend from 'i18next-http-backend';
+// import { initReactI18next } from 'react-i18next';
 import { getEnv } from './env.schema.ts';
 import { i18nNamespacesSchema, RouteHandleData } from './index.ts';
 
@@ -106,36 +106,36 @@ export function getNamespaces(routes?: ({ handle?: unknown } | undefined)[]) {
 /**
  * Initializes the client instance of i18next.
  */
-export async function initI18n(namespaces: Array<string>) {
-  const { I18NEXT_DEBUG } = getEnv(process.env);
-  const i18n = createInstance();
+// export async function initI18n(namespaces: Array<string>) {
+//   const { I18NEXT_DEBUG } = getEnv(process.env);
+//   const i18n = createInstance();
 
-  const languageDetector = {
-    type: 'languageDetector',
-    detect: () => document.documentElement.lang,
-  } satisfies LanguageDetectorModule;
+//   const languageDetector = {
+//     type: 'languageDetector',
+//     detect: () => document.documentElement.lang,
+//   } satisfies LanguageDetectorModule;
 
-  await i18n
-    .use(initReactI18next)
-    .use(languageDetector)
-    .use(I18NextHttpBackend)
-    .init({
-      appendNamespaceToMissingKey: true,
-      debug: I18NEXT_DEBUG,
-      defaultNS: false,
-      fallbackLng: false,
-      interpolation: {
-        escapeValue: false,
-      },
-      ns: namespaces,
-      preload: APP_LOCALES,
-      react: {
-        useSuspense: false,
-      },
-    });
+//   await i18n
+//     .use(initReactI18next)
+//     .use(languageDetector)
+//     .use(I18NextHttpBackend)
+//     .init({
+//       appendNamespaceToMissingKey: true,
+//       debug: I18NEXT_DEBUG,
+//       defaultNS: false,
+//       fallbackLng: false,
+//       interpolation: {
+//         escapeValue: false,
+//       },
+//       ns: namespaces,
+//       preload: APP_LOCALES,
+//       react: {
+//         useSuspense: false,
+//       },
+//     });
 
-  return i18n;
-}
+//   return i18n;
+// }
 
 /**
  * Returns a tuple representing a typed list of namespaces.
