@@ -49,7 +49,7 @@ export function getAltLanguage(language: string): AppLocale {
  *
  * @returns An object containing the current language the alternate language.
  * @throws {Error} If no language can be detected for the current route.
- */
+ */ 
 /**
  * A hook that returns the current language from the route.
  *

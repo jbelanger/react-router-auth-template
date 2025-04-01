@@ -4,8 +4,8 @@ import { initReactI18next } from 'react-i18next';
 import { getServerEnv } from '~/utils/env.utils';
 import commonEn from '~/../public/locales/en/common.json';
 import commonFr from '~/../public/locales/fr/common.json';
-
-
+ 
+   
     const i18n = createInstance();
     const { NODE_ENV } = getServerEnv(process.env);
     const I18NEXT_DEBUG = true;//NODE_ENV !== 'production';

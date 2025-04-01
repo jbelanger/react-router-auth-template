@@ -10,6 +10,8 @@ import {
 import type { Route } from "./+types/root";
 import { I18nRoutesProvider } from "@gc-fwcs/i18n/routing";
 import i18nRoutes from "./routes";
+import { getLanguage } from "@gc-fwcs/i18n";
+import { useTranslation } from "react-i18next";
 
 
 export const links: Route.LinksFunction = () => [
@@ -26,8 +28,9 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { i18n } = useTranslation();
   return (
-    <html lang="en">
+    <html lang={i18n.language}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

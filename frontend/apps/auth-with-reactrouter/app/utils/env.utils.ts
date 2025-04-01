@@ -5,7 +5,7 @@ import { z } from 'zod';
 const csvToArray = (csv?: string) => csv?.split(',').map((str) => str.trim()) ?? [];
 const emptyToUndefined = (val?: string) => (val === '' ? undefined : val);
 const toBoolean = (val?: string) => val === 'true';
-
+ 
 /**
  * Environment variables that will be available to server only.
  */
