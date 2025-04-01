@@ -89,11 +89,6 @@ export function i18nRoute(enPath: string, frPath: string, file: string, children
       const normalizedEnPath = enPath.startsWith('/') ? enPath : `/${enPath}`;
       const normalizedFrPath = frPath.startsWith('/') ? frPath : `/${frPath}`;
 
-    // Ensure paths begins with /:lang, /en or /fr so that i18n translation can detect the current language from the route
-    if (!enPath.startsWith('/en') && !enPath.startsWith('/fr') && !enPath.startsWith('/:lang')) {
-      console.log(`Path "${enPath}" does not start with "/en", "/fr" or "/:lang". This will cause issues with i18n language detection.`);
-    }
-
     return [
       { ...route(normalizedEnPath, file, { id: `${normalizedEnPath}-en` }, children), lang: 'en' },
       // The id of the french route has the same id as the english route, but with "-fr" suffix
