@@ -11,7 +11,4 @@ export const i18nNamespacesSchema = z
   .refine((arr) => Array.isArray(arr) && arr.every((val) => typeof val === 'string' && !validator.isEmpty(val)))
   .readonly();
 
-// Re-export routing features
-//export * from './routing/index.ts';
-
 export { useCurrentLanguage, getLanguage } from './locale-utils.ts';

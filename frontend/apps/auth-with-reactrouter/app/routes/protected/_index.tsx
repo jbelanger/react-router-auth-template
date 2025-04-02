@@ -7,6 +7,10 @@ import i18nRoutes from "~/routes";
 import { useTranslation } from "react-i18next";
 //import i18next from '../../i18n'
 
+export let handle = {
+  i18n: "common"
+};
+
 export async function loader({ context, request }: Route.LoaderArgs) {
   const user = await ensureUserAuthenticated(context.session, request);
 
@@ -42,11 +46,10 @@ export default function Index() {
   const { isAuthenticated, user, claims } = useLoaderData<typeof loader>();
   const { t } = useTranslation();
   const currLang = useCurrentLanguage();
-  //const t = i18next.t;
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6">{ t("Remix Auth2 Demo")}</h1>
+      <h1 className="text-3xl font-bold mb-6">{ t("common:Remix Auth2 Demo")}</h1>
 
       {isAuthenticated ? (
         <div className="space-y-6">

@@ -1,6 +1,6 @@
 import type { FlatNamespace } from 'i18next';
 import { useLocation } from 'react-router';
-import { findRouteByPathname, ExtendedRouteConfigEntry, useRoutes } from './routing/routes-utils.tsx';
+import { findRouteByPathname, ExtendedRouteConfigEntry, useRoutes } from '../routing/routes-utils.tsx';
 import { RouteConfigEntry } from '@react-router/dev/routes';
 
 

@@ -5,6 +5,11 @@ import type { UserData } from "../../types/user-data";
 import type { Route } from "./+types/_layout";
 import { ensureUserAuthenticated } from "~/utils/auth.utils.server";
 import { I18nLink } from "@gc-fwcs/i18n/routing";
+import { useTranslation } from "react-i18next";
+
+// export const handle = {
+//     i18n: "layout"
+//   };
 
 export async function loader({ request, context }: Route.LoaderArgs) {
     let user = context.session.find<UserData>('user');
@@ -20,6 +25,7 @@ export async function loader({ request, context }: Route.LoaderArgs) {
 
 export default function ProtectedRoute() {
     const { user } = useLoaderData<typeof loader>();
+    const { t } = useTranslation("layout");
 
     if (!user) {
         return <Navigate to="/auth/login" replace />;
@@ -31,7 +37,7 @@ export default function ProtectedRoute() {
             <header className="bg-gray-800 p-4">
                 <div className="container mx-auto">
                     <div className="flex justify-between items-center">
-                        <h1 className="text-xl font-semibold">Protected Area</h1>
+                        <h1 className="text-xl font-semibold">{t("React Router Demo")}</h1>
                         <div className="text-sm text-gray-300">
                             Welcome, {user?.displayName}
                         </div>

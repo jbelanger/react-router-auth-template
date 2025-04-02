@@ -8,40 +8,12 @@ import type { RenderToPipeableStreamOptions } from "react-dom/server";
 import { renderToPipeableStream } from "react-dom/server";
 import commonEn from '~/../public/locales/en/common.json';
 import commonFr from '~/../public/locales/fr/common.json';
-import { createInstance } from "i18next";
-import { I18nextProvider, initReactI18next } from "react-i18next";
-import { getLanguage } from "@gc-fwcs/i18n";
+import layoutEn from '~/../public/locales/en/layout.json';
+import layoutFr from '~/../public/locales/fr/layout.json';
+import { I18nextProvider } from "react-i18next";
+import { createI18nServer } from "@gc-fwcs/i18n/server";
 import i18nRoutes from "./routes";
-
-// Server-side i18n initialization
-export async function initServerI18n(locale = 'en') {
-  const i18n = createInstance();
-  
-  await i18n
-    .use(initReactI18next)
-    .init({
-      lng: locale,
-      fallbackLng: 'en',
-      supportedLngs: ['en', 'fr'],
-      defaultNS: 'common',
-      interpolation: {
-        escapeValue: false,
-      },
-      resources: {
-        en: {
-          common: commonEn,
-        },
-        fr: {
-          common: commonFr,
-        },
-      },
-      react: {
-        useSuspense: false,
-      },
-    });
-
-  return i18n;
-}
+import { getLanguage } from "@gc-fwcs/i18n";
 
 export const streamTimeout = 5_000;
 
@@ -68,8 +40,23 @@ export default async function handleRequest(
   // loadContext: unstable_RouterContextProvider
 ) {
 
-  const locale = getLanguage(request, i18nRoutes);
-  const i18n = await initServerI18n(locale);
+  const i18n = await createI18nServer(
+    request,
+    routerContext,
+    i18nRoutes,
+    {
+      resources: {
+        en: {
+          common: commonEn,
+          layout: layoutEn
+        },
+        fr: {
+          common: commonFr,
+          layout: layoutFr
+        },
+      }
+    }
+  );
 
   return new Promise((resolve, reject) => {
     let shellRendered = false;
