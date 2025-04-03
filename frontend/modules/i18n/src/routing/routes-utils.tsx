@@ -1,14 +1,16 @@
-import { createContext, useContext, ReactNode } from 'react';
-import { route, RouteConfigEntry } from '@react-router/dev/routes';
+import { ReactNode, createContext, useContext } from 'react';
+
+import { RouteConfigEntry, route } from '@react-router/dev/routes';
+
 import { useLocation } from 'react-router';
+
 import { AppLocale } from './index.ts';
 
 export type ExtendedRouteConfigEntry = RouteConfigEntry & {
-  lang: AppLocale;
+   lang: AppLocale;
 };
 
 const RoutesContext = createContext<RouteConfigEntry[]>([]);
-
 
 /**
  * A context provider that makes route configurations available throughout the application.
@@ -17,18 +19,8 @@ const RoutesContext = createContext<RouteConfigEntry[]>([]);
  * @param routes - Array of route configurations to provide
  * @param children - Child components that need access to routes
  */
-export function I18nRoutesProvider({
-  routes,
-  children
-}: {
-  routes: RouteConfigEntry[];
-  children: ReactNode;
-}) {
-  return (
-    <RoutesContext.Provider value={routes}>
-      {children}
-    </RoutesContext.Provider>
-  );
+export function I18nRoutesProvider({ routes, children }: { routes: RouteConfigEntry[]; children: ReactNode }) {
+   return <RoutesContext.Provider value={routes}>{children}</RoutesContext.Provider>;
 }
 
 /**
@@ -36,14 +28,14 @@ export function I18nRoutesProvider({
  * (ie: 'en' → 'fr'; 'fr' → 'en')
  */
 export function getAltLanguage(language: string): AppLocale {
-  switch (language) {
-    case 'en':
-      return 'fr';
-    case 'fr':
-      return 'en';
-    default:
-      throw new Error(`Could not determine altLanguage for language: ${language}.`);
-  }
+   switch (language) {
+      case 'en':
+         return 'fr';
+      case 'fr':
+         return 'en';
+      default:
+         throw new Error(`Could not determine altLanguage for language: ${language}.`);
+   }
 }
 
 /**
@@ -55,22 +47,37 @@ export function getAltLanguage(language: string): AppLocale {
  * @returns The detected language as AppLocale ('en' | 'fr')
  * @throws {Error} When no route is found and fallback is false
  */
-export function getRouteLanguage(resource: Request | URL | string, routes: RouteConfigEntry[], fallback: boolean = true): AppLocale {
-  const pathname = resource instanceof Request ? new URL(resource.url).pathname :
-                  resource instanceof URL ? resource.pathname :
-                  resource;
-  
-  const route = findRoute(routes, 'path', pathname);
-  if (route) {
-    return (route as ExtendedRouteConfigEntry).lang;
-  }
-  
-  console.error(`No route found for pathname: ${pathname}`);
-  if (!fallback) {
-    throw new Error(`No route found for pathname: ${pathname}`);
-  }
+export function getRouteLanguage(
+   resource: Request | URL | string,
+   routes: RouteConfigEntry[],
+   fallback: boolean = true,
+): AppLocale {
+   const pathname =
+      resource instanceof Request
+         ? new URL(resource.url).pathname
+         : resource instanceof URL
+           ? resource.pathname
+           : resource;
 
-  return 'en';
+   const route = findRoute(routes, 'path', pathname);
+   if (route) {
+      if (!isExtendedRoute(route)) {
+         console.error(`Route found for "${pathname}" but it lacks language information`);
+         return fallback
+            ? 'en'
+            : (() => {
+                 throw new Error(`Route found for "${pathname}" but it lacks language information`);
+              })();
+      }
+      return route.lang;
+   }
+
+   console.error(`No route found for pathname: ${pathname}`);
+   if (!fallback) {
+      throw new Error(`No route found for pathname: ${pathname}`);
+   }
+
+   return 'en';
 }
 
 /**
@@ -80,9 +87,9 @@ export function getRouteLanguage(resource: Request | URL | string, routes: Route
  * @throws {Error} When no route is found
  */
 export function useCurrentLanguage(): AppLocale {
-  const { pathname } = useLocation();
-  const routes = useRoutes();
-  return getRouteLanguage(pathname, routes, false);
+   const { pathname } = useLocation();
+   const routes = useRoutes();
+   return getRouteLanguage(pathname, routes, false);
 }
 
 /**
@@ -92,7 +99,7 @@ export function useCurrentLanguage(): AppLocale {
  * @returns Array of all route configurations
  */
 export function useRoutes(): RouteConfigEntry[] {
-  return useContext(RoutesContext);
+   return useContext(RoutesContext);
 }
 
 /**
@@ -100,10 +107,9 @@ export function useRoutes(): RouteConfigEntry[] {
  * import findRouteById from routes.server.ts instead.
  */
 export function useRouteById(id: string): RouteConfigEntry | undefined {
-  const routes = useRoutes();
-  return findRoute(routes, 'id', id);
+   const routes = useRoutes();
+   return findRoute(routes, 'id', id);
 }
-
 
 /**
  * Creates route configurations for both English and French versions of a route
@@ -114,35 +120,52 @@ export function useRouteById(id: string): RouteConfigEntry | undefined {
  * @param children - Optional child routes
  * @returns Array containing both language versions of the route with appropriate IDs
  */
-export function i18nRoute(enPath: string, frPath: string, file: string, children?: RouteConfigEntry[]): ExtendedRouteConfigEntry[] {
+export function i18nRoute(
+   enPath: string,
+   frPath: string,
+   file: string,
+   children?: RouteConfigEntry[],
+): ExtendedRouteConfigEntry[] {
+   // Ensure paths start with "/"
+   const normalizedEnPath = enPath.startsWith('/') ? enPath : `/${enPath}`;
+   const normalizedFrPath = frPath.startsWith('/') ? frPath : `/${frPath}`;
 
-      // Ensure paths start with "/"
-      const normalizedEnPath = enPath.startsWith('/') ? enPath : `/${enPath}`;
-      const normalizedFrPath = frPath.startsWith('/') ? frPath : `/${frPath}`;
-
-    return [
+   return [
       { ...route(normalizedEnPath, file, { id: `${normalizedEnPath}-en` }, children), lang: 'en' },
       // The id of the french route has the same id as the english route, but with "-fr" suffix
       // This is to allow the i18n links to find the proper route based on the english link.
       // The i18nlink should always have the "to" prop set to the english route id.
-      { ...route(normalizedFrPath, file, { id: `${normalizedEnPath}-fr` }, children), lang: 'fr' }
-    ] as ExtendedRouteConfigEntry[];
-  }
+      { ...route(normalizedFrPath, file, { id: `${normalizedEnPath}-fr` }, children), lang: 'fr' },
+   ] as ExtendedRouteConfigEntry[];
+}
 
 /**
  * Find a route by its ID or pathname. This can be used server-side in loaders and actions.
  * For client-side route lookup, use the useRouteById hook instead.
+ *
+ * @param routes - Array of route configurations to search through
+ * @param key - The key to match on (e.g., 'id', 'path')
+ * @param value - The value to match against
+ * @returns The matched route or undefined if no match found
  */
 function findRoute<T extends keyof RouteConfigEntry>(
-  routes: RouteConfigEntry[],
-  key: T,
-  value: RouteConfigEntry[T]
+   routes: RouteConfigEntry[],
+   key: T,
+   value: RouteConfigEntry[T],
 ): RouteConfigEntry | undefined {
-  for (const route of routes) {
-    if (route[key] === value) return route;
-    if (route.children?.length) {
-      const found = findRoute(route.children, key, value);
-      if (found) return found;
-    }
-  }
+   for (const route of routes) {
+      if (route[key] === value) return route;
+      if (route.children?.length) {
+         const found = findRoute(route.children, key, value);
+         if (found) return found;
+      }
+   }
+   return undefined; // Explicit return for clarity
+}
+
+/**
+ * Type guard to check if a route has language information
+ */
+function isExtendedRoute(route: RouteConfigEntry): route is ExtendedRouteConfigEntry {
+   return 'lang' in route;
 }

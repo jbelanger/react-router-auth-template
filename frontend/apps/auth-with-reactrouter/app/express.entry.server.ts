@@ -1,6 +1,7 @@
-import { getLogger } from '@gc-fwcs/logger';
 import { createExpressApp } from '@gc-fwcs/express';
+import { getLogger } from '@gc-fwcs/logger';
 import { createRedisCacheClient } from '@gc-fwcs/session';
+
 import { getServerEnv } from './utils/env.utils';
 
 const env = getServerEnv();

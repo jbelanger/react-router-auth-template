@@ -9,5 +9,5 @@ const minimatch = (minimatchModule as any).default || minimatchModule.minimatch 
  * @returns - True if the path should be ignored, false otherwise.
  */
 export function shouldIgnore(ignorePatterns: string[], path: string): boolean {
-    return ignorePatterns.some((entry) => minimatch(path, entry));
+   return ignorePatterns.some((entry) => minimatch(path, entry));
 }

@@ -1,50 +1,29 @@
 {
-    "name": "gc-fwcs",
-    "private": true,
-    "license": "AGPL-3.0",
-    "author": "Web Solutions and Client Access (WSCA)",
-    "scripts": {
-        "preinstall": "npx only-allow pnpm",
-        "build": "pnpm -F auth-with-reactrouter run build",
-        "build:modules": "pnpm -F './modules/*' run build",
-        "build:app": "pnpm -F auth-with-reactrouter run build",
-        "dev": "pnpm -F auth-with-reactrouter run dev",
-        "dev:app": "pnpm -F auth-with-reactrouter run dev",
-        "test": "pnpm -r run test",
-        "lint": "pnpm -r run lint",
-        "tsc": "pnpm -r run tsc",
-        "clean": "pnpm -r run clean"
-    },
-    "engines": {
-        "node": ">=22.0.0",
-        "pnpm": ">=10.6.2"
-    },
-    "packageManager": "pnpm@10.6.2",
-"prettier": {
-    "semi": true,
-    "tabWidth": 3,
-    "singleQuote": true,
-    "printWidth": 120,
-    "bracketSameLine": true,
-    "importOrder": [
-      "reflect-metadata",
-      "^react$",
-      "^@testing-library/(.*)$",
-      "^@remix(.*)$",
-      "^@react-router(.*)$",
-      "<THIRD_PARTY_MODULES>",
-      "^[(.|~)/]"
-    ],
-    "importOrderParserPlugins": [
-      "typescript",
-      "jsx",
-      "decorators-legacy"
-    ],
-    "importOrderSeparation": true,
-    "importOrderSortSpecifiers": true,
-    "plugins": [
-      "@trivago/prettier-plugin-sort-imports",
-      "prettier-plugin-tailwindcss"
-    ]
-  }
+   "name": "gc-fwcs",
+   "private": true,
+   "license": "AGPL-3.0",
+   "author": "Web Solutions and Client Access (WSCA)",
+   "scripts": {
+      "preinstall": "npx only-allow pnpm",
+      "build": "pnpm -F auth-with-reactrouter run build",
+      "build:modules": "pnpm -F './modules/*' run build",
+      "build:app": "pnpm -F auth-with-reactrouter run build",
+      "dev": "pnpm -F auth-with-reactrouter run dev",
+      "dev:app": "pnpm -F auth-with-reactrouter run dev",
+      "test": "pnpm -r run test",
+      "lint": "pnpm -r run lint",
+      "tsc": "pnpm -r run tsc",
+      "clean": "pnpm -r run clean",
+      "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\""
+   },
+   "devDependencies": {
+      "prettier": "^3.2.5",
+      "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+      "prettier-plugin-tailwindcss": "^0.5.12"
+   },
+   "engines": {
+      "node": ">=22.0.0",
+      "pnpm": ">=10.6.2"
+   },
+   "packageManager": "pnpm@10.6.2"
 }

@@ -20,8 +20,8 @@ Example:
 
 This creates two routes:
 
--  English: `/products` with ID `products-en`
--  French: `/produits` with ID `products-fr`
+- English: `/products` with ID `products-en`
+- French: `/produits` with ID `products-fr`
 
 ### 2. I18nLink Component
 
@@ -33,10 +33,10 @@ A React component that renders internationalized links, automatically handling l
 
 Features:
 
--  Automatically uses the current language context when no `lang` prop is provided
--  Supports explicit language override: `<I18nLink to="products" lang="fr">`
--  Handles route parameters
--  Falls back to regular links for external URLs (e.g., `<I18nLink to="https://example.com">`)
+- Automatically uses the current language context when no `lang` prop is provided
+- Supports explicit language override: `<I18nLink to="products" lang="fr">`
+- Handles route parameters
+- Falls back to regular links for external URLs (e.g., `<I18nLink to="https://example.com">`)
 
 ### 3. I18nRoutesProvider Component
 
@@ -44,7 +44,7 @@ A context provider component that makes route configurations available throughou
 
 ```tsx
 <I18nRoutesProvider routes={routes}>
-  <App />
+   <App />
 </I18nRoutesProvider>
 ```
 
@@ -100,8 +100,8 @@ function Navigation() {
 
 The system uses a consistent ID scheme for language-specific routes:
 
--  English routes: `{path}-en`
--  French routes: `{path}-fr`
+- English routes: `{path}-en`
+- French routes: `{path}-fr`
 
 This allows the `I18nLink` component to find the corresponding route in different languages.
 
@@ -111,18 +111,19 @@ The module provides several hooks and utilities:
 
 #### Client-Side Hooks
 
--  `useRoutes()`: Access all route configurations
--  `useRouteById(id)`: Find a specific route by ID
--  `useCurrentLanguage()`: Get the current language based on the route
+- `useRoutes()`: Access all route configurations
+- `useRouteById(id)`: Find a specific route by ID
+- `useCurrentLanguage()`: Get the current language based on the route
 
 #### Server-Side Utilities
 
--  `getRouteLanguage(resource, routes, fallback?)`: Extract language from a route
+- `getRouteLanguage(resource, routes, fallback?)`: Extract language from a route
+
    - `resource`: Request, URL, or string path
    - `routes`: Array of route configurations
    - `fallback`: Whether to fallback to 'en' (true) or throw error (false)
 
--  `getAltLanguage(language)`: Get alternate language ('en' → 'fr' or 'fr' → 'en')
+- `getAltLanguage(language)`: Get alternate language ('en' → 'fr' or 'fr' → 'en')
 
 Example server-side usage:
 
@@ -130,6 +131,7 @@ Example server-side usage:
 import { getRouteLanguage } from '@gc-fwcs/i18n/routing';
 
 export async function loader({ request, routes }) {
-  const lang = getRouteLanguage(request, routes);
-  // Use language for i18n setup
+   const lang = getRouteLanguage(request, routes);
+   // Use language for i18n setup
 }
+```

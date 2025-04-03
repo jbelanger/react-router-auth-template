@@ -17,34 +17,34 @@ This is a workspace-only package and is not published to npm. Add it to your pro
 
 ```json
 {
-  "dependencies": {
-    "@gc-fwcs/auth": "workspace:*"
-  }
+   "dependencies": {
+      "@gc-fwcs/auth": "workspace:*"
+   }
 }
 ```
 
 ## Quick Start
 
 ```typescript
-import { createMsalProvider } from "@gc-fwcs/auth";
-import { createClient } from "redis";
+import { createMsalProvider } from '@gc-fwcs/auth';
+import { createClient } from 'redis';
 
 // Create Redis client
 const redisClient = createClient({
-  url: process.env.REDIS_URL,
+   url: process.env.REDIS_URL,
 });
 await redisClient.connect();
 
 // Create auth provider
 const authProvider = await createMsalProvider({
-  auth: {
-    clientId: process.env.ENTRA_CLIENT_ID,
-    clientSecret: process.env.ENTRA_CLIENT_SECRET,
-    tenantId: process.env.ENTRA_TENANT_ID,
-    scopes: ["openid", "profile", "email", "offline_access"],
-    redirectUri: "https://example.com/auth/callback",
-  },
-  redisClient,
+   auth: {
+      clientId: process.env.ENTRA_CLIENT_ID,
+      clientSecret: process.env.ENTRA_CLIENT_SECRET,
+      tenantId: process.env.ENTRA_TENANT_ID,
+      scopes: ['openid', 'profile', 'email', 'offline_access'],
+      redirectUri: 'https://example.com/auth/callback',
+   },
+   redisClient,
 });
 
 // Use the auth provider in your application
@@ -127,23 +127,23 @@ Signs out the user by clearing tokens and redirecting to identity provider's log
 
 ```typescript
 interface AuthConfig {
-  // Microsoft authentication configuration
-  auth: {
-    clientId: string; // Microsoft client ID (Application ID)
-    clientSecret: string; // Microsoft client secret
-    tenantId: string; // Microsoft tenant ID
-    authority?: string; // Authority URL (optional)
-    scopes?: string[]; // OAuth scopes to request
-    redirectUri: string; // Full URL for OAuth callbacks
-  };
+   // Microsoft authentication configuration
+   auth: {
+      clientId: string; // Microsoft client ID (Application ID)
+      clientSecret: string; // Microsoft client secret
+      tenantId: string; // Microsoft tenant ID
+      authority?: string; // Authority URL (optional)
+      scopes?: string[]; // OAuth scopes to request
+      redirectUri: string; // Full URL for OAuth callbacks
+   };
 
-  // Redis client for distributed caching
-  redisClient: RedisClientType;
+   // Redis client for distributed caching
+   redisClient: RedisClientType;
 
-  // Cache configuration options
-  cache?: {
-    ttl?: number; // Token cache TTL in seconds (default: 24 hours)
-  };
+   // Cache configuration options
+   cache?: {
+      ttl?: number; // Token cache TTL in seconds (default: 24 hours)
+   };
 }
 ```
 
@@ -167,23 +167,23 @@ Common error codes include:
 
 ```typescript
 // auth-route.js
-import { authProvider } from "./auth-config";
+import { authProvider } from './auth-config';
 
 export async function loader({ request, context }) {
-  const { session } = context;
-  const { pathname } = new URL(request.url);
+   const { session } = context;
+   const { pathname } = new URL(request.url);
 
-  // Check the path to determine operation
-  if (pathname.endsWith("/login")) {
-    return await authProvider.generateAuthorizationUrl(session);
-  } else if (pathname.endsWith("/callback")) {
-    return await authProvider.exchangeCodeForTokens(session, request);
-  } else if (pathname.endsWith("/logout")) {
-    return await authProvider.logout(session, request);
-  }
+   // Check the path to determine operation
+   if (pathname.endsWith('/login')) {
+      return await authProvider.generateAuthorizationUrl(session);
+   } else if (pathname.endsWith('/callback')) {
+      return await authProvider.exchangeCodeForTokens(session, request);
+   } else if (pathname.endsWith('/logout')) {
+      return await authProvider.logout(session, request);
+   }
 
-  // Handle unknown paths
-  return new Response("Not found", { status: 404 });
+   // Handle unknown paths
+   return new Response('Not found', { status: 404 });
 }
 ```
 

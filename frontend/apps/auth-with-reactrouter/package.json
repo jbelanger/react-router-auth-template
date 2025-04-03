@@ -1,55 +1,55 @@
 {
-  "name": "auth-with-reactrouter",
-  "private": true,
-  "type": "module",
-  "sideEffects": false,
-  "scripts": {
-    "build": "pnpm build:application && pnpm build:server",
-    "build:application": "react-router build",
-    "build:server": "vite build --config ./vite.express.server.config.ts",
-    "dev": "tsx --env-file-if-exists=.env app/express.entry.server.ts",
-    "start": "cross-env NODE_ENV=production node --env-file-if-exists=./.env ./build/server/express.entry.server.js",
-    "typecheck": "react-router typegen && tsc",
-    "clean": "if exist node_modules rd /s /q node_modules && if exist build rd /s /q build"
-  },
-  "dependencies": {
-    "@gc-fwcs/auth": "workspace:*",
-    "@gc-fwcs/express": "workspace:*",
-    "@gc-fwcs/helpers": "workspace:*",
-    "@gc-fwcs/i18n": "workspace:*",
-    "@gc-fwcs/logger": "workspace:*",
-    "@gc-fwcs/session": "workspace:*",
-    "@react-router/node": "^7.4.0",
-    "@react-router/serve": "^7.4.0",
-    "cross-env": "^7.0.3",
-    "i18next": "^24.2.3",
-    "i18next-browser-languagedetector": "^8.0.4",
-    "i18next-fs-backend": "^2.6.0",
-    "i18next-http-backend": "^3.0.2",
-    "isbot": "^5.1.17",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-i18next": "^15.4.1",
-    "react-router": "^7.4.0",
-    "react-router-dom": "7.4.0",
-    "remix-i18next": "^7.1.0",
-    "tsx": "^4.19.3",
-    "vite": "^6.2.3",
-    "vite-tsconfig-paths": "^5.1.4"
-  },
-  "devDependencies": {
-    "@react-router/dev": "^7.4.0",
-    "@tailwindcss/vite": "^4.0.0",
-    "@types/node": "^20",
-    "@types/react": "^19.0.1",
-    "@types/react-dom": "^19.0.1",
-    "@vitejs/plugin-react": "^4.2.1",
-    "nodemon": "^3.1.9",
-    "react-router-devtools": "^1.1.0",
-    "tailwindcss": "^4.0.0",
-    "tsconfig": "workspace:*"
-  },
-  "engines": {
-    "node": ">=22.0.0"
-  }
+   "name": "auth-with-reactrouter",
+   "private": true,
+   "type": "module",
+   "sideEffects": false,
+   "scripts": {
+      "build": "pnpm build:application && pnpm build:server",
+      "build:application": "react-router build",
+      "build:server": "vite build --config ./vite.express.server.config.ts",
+      "dev": "tsx --env-file-if-exists=.env app/express.entry.server.ts",
+      "start": "cross-env NODE_ENV=production node --env-file-if-exists=./.env ./build/server/express.entry.server.js",
+      "typecheck": "react-router typegen && tsc",
+      "clean": "if exist node_modules rd /s /q node_modules && if exist build rd /s /q build"
+   },
+   "dependencies": {
+      "@gc-fwcs/auth": "workspace:*",
+      "@gc-fwcs/express": "workspace:*",
+      "@gc-fwcs/helpers": "workspace:*",
+      "@gc-fwcs/i18n": "workspace:*",
+      "@gc-fwcs/logger": "workspace:*",
+      "@gc-fwcs/session": "workspace:*",
+      "@react-router/node": "^7.4.0",
+      "@react-router/serve": "^7.4.0",
+      "cross-env": "^7.0.3",
+      "i18next": "^24.2.3",
+      "i18next-browser-languagedetector": "^8.0.4",
+      "i18next-fs-backend": "^2.6.0",
+      "i18next-http-backend": "^3.0.2",
+      "isbot": "^5.1.17",
+      "react": "^19.0.0",
+      "react-dom": "^19.0.0",
+      "react-i18next": "^15.4.1",
+      "react-router": "^7.4.0",
+      "react-router-dom": "7.4.0",
+      "remix-i18next": "^7.1.0",
+      "tsx": "^4.19.3",
+      "vite": "^6.2.3",
+      "vite-tsconfig-paths": "^5.1.4"
+   },
+   "devDependencies": {
+      "@react-router/dev": "^7.4.0",
+      "@tailwindcss/vite": "^4.0.0",
+      "@types/node": "^20",
+      "@types/react": "^19.0.1",
+      "@types/react-dom": "^19.0.1",
+      "@vitejs/plugin-react": "^4.2.1",
+      "nodemon": "^3.1.9",
+      "react-router-devtools": "^1.1.0",
+      "tailwindcss": "^4.0.0",
+      "tsconfig": "workspace:*"
+   },
+   "engines": {
+      "node": ">=22.0.0"
+   }
 }

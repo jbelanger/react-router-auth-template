@@ -1,41 +1,41 @@
 {
-    "name": "@gc-fwcs/express",
-    "license": "AGPL-3.0",
-    "version": "0.1.0",
-    "private": true,
-    "type": "module",
-    "main": "src/index.ts",
-    "types": "src/index.ts",
-    "scripts": {
-        "prettier": "prettier --check .",
-        "prettier:fix": "prettier --write .",
-        "lint": "eslint \"src/**/*.ts*\"",
-        "test": "jest --detectOpenHandles --forceExit --passWithNoTests",
-        "tsc": "tsc --project tsconfig.json",
-        "clean": "rm -rf node_modules"
-    },
-    "dependencies": {
-        "@gc-fwcs/logger": "workspace:*",
-        "@gc-fwcs/session": "workspace:*",
-        "@gc-fwcs/helpers": "workspace:*",
-        "compression": "^1.8.0",
-        "minimatch": "^10.0.1",
-        "pino-http": "^9.0.0",
-        "source-map-support": "^0.5.21",
-        "vite-plugin-static-copy": "^2.3.0"
-    },
-    "peerDependencies": {
-        "express": "^4.21.2",
-        "@react-router/express": "^7.3.0",
-    "vite": "^6.2.3",
-    "vite-tsconfig-paths": "^5.1.4",
-        "redis": "^4.7.0"
-    },
-    "devDependencies": {
-        "tsconfig": "workspace:*",
-        "@types/compression": "^1.7.5",
-        "@types/express": "^5.0.0",
-        "@types/node": "^20.0.0",
-        "@types/source-map-support": "^0.5.10"
-    }
+   "name": "@gc-fwcs/express",
+   "license": "AGPL-3.0",
+   "version": "0.1.0",
+   "private": true,
+   "type": "module",
+   "main": "src/index.ts",
+   "types": "src/index.ts",
+   "scripts": {
+      "prettier": "prettier --check .",
+      "prettier:fix": "prettier --write .",
+      "lint": "eslint \"src/**/*.ts*\"",
+      "test": "jest --detectOpenHandles --forceExit --passWithNoTests",
+      "tsc": "tsc --project tsconfig.json",
+      "clean": "rm -rf node_modules"
+   },
+   "dependencies": {
+      "@gc-fwcs/logger": "workspace:*",
+      "@gc-fwcs/session": "workspace:*",
+      "@gc-fwcs/helpers": "workspace:*",
+      "compression": "^1.8.0",
+      "minimatch": "^10.0.1",
+      "pino-http": "^9.0.0",
+      "source-map-support": "^0.5.21",
+      "vite-plugin-static-copy": "^2.3.0"
+   },
+   "peerDependencies": {
+      "express": "^4.21.2",
+      "@react-router/express": "^7.3.0",
+      "vite": "^6.2.3",
+      "vite-tsconfig-paths": "^5.1.4",
+      "redis": "^4.7.0"
+   },
+   "devDependencies": {
+      "tsconfig": "workspace:*",
+      "@types/compression": "^1.7.5",
+      "@types/express": "^5.0.0",
+      "@types/node": "^20.0.0",
+      "@types/source-map-support": "^0.5.10"
+   }
 }

@@ -5,7 +5,7 @@ import { z } from 'zod';
 const csvToArray = (csv?: string) => csv?.split(',').map((str) => str.trim()) ?? [];
 const emptyToUndefined = (val?: string) => (val === '' ? undefined : val);
 const toBoolean = (val?: string) => val === 'true';
- 
+
 /**
  * Environment variables that will be available to server only.
  */
@@ -56,5 +56,5 @@ const serverEnv = z.object({
 export type ServerEnvConfig = z.infer<typeof serverEnv>;
 
 export const getServerEnv = (env: NodeJS.ProcessEnv = process.env): ServerEnvConfig => {
-  return serverEnv.parse(env);
+   return serverEnv.parse(env);
 };
