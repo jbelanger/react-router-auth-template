@@ -4,17 +4,18 @@ import type { UserData } from "../../types/user-data";
 
 import type { Route } from "./+types/_layout";
 import { ensureUserAuthenticated } from "~/utils/auth.utils.server";
-import { I18nLink } from "@gc-fwcs/i18n/routing";
+import { getRouteLanguage, I18nLink } from "@gc-fwcs/i18n/routing";
+import { getFixedT } from "@gc-fwcs/i18n/server";
+import i18nRoutes from "~/routes";
 import { useTranslation } from "react-i18next";
-
-// export const handle = {
-//     i18n: "layout"
-//   };
 
 export async function loader({ request, context }: Route.LoaderArgs) {
     let user = context.session.find<UserData>('user');
     const user2 = await ensureUserAuthenticated(context.session, request);
+    const lang = getRouteLanguage(request, i18nRoutes);
+    const t = await getFixedT(lang, "layout");
 
+    console.log(t("React Router Demo"));
     if (!user)
         return {};
 
@@ -26,6 +27,7 @@ export async function loader({ request, context }: Route.LoaderArgs) {
 export default function ProtectedRoute() {
     const { user } = useLoaderData<typeof loader>();
     const { t } = useTranslation("layout");
+    
 
     if (!user) {
         return <Navigate to="/auth/login" replace />;

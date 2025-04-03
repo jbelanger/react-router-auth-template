@@ -10,9 +10,7 @@ import {
 import type { Route } from "./+types/root";
 import { I18nRoutesProvider } from "@gc-fwcs/i18n/routing";
 import i18nRoutes from "./routes";
-import { getLanguage } from "@gc-fwcs/i18n";
 import { useTranslation } from "react-i18next";
-
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },

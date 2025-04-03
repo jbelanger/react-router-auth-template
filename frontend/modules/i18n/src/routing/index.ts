@@ -1,5 +1,4 @@
-// Types
-export type { RouteHandleData } from './types.ts';
+export type AppLocale = 'en' | 'fr';
 
 // Components
 export { I18nLink } from './i18n-link.tsx';
@@ -11,5 +10,6 @@ export {
   I18nRoutesProvider,
   useRoutes,
   useRouteById,
-  useI18nNamespaces
+  useCurrentLanguage, 
+  getRouteLanguage
 } from './routes-utils.tsx';

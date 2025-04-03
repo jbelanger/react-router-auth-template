@@ -6,14 +6,10 @@ import { ServerRouter } from "react-router";
 import { isbot } from "isbot";
 import type { RenderToPipeableStreamOptions } from "react-dom/server";
 import { renderToPipeableStream } from "react-dom/server";
-import commonEn from '~/../public/locales/en/common.json';
-import commonFr from '~/../public/locales/fr/common.json';
-import layoutEn from '~/../public/locales/en/layout.json';
-import layoutFr from '~/../public/locales/fr/layout.json';
 import { I18nextProvider } from "react-i18next";
 import { createI18nServer } from "@gc-fwcs/i18n/server";
 import i18nRoutes from "./routes";
-import { getLanguage } from "@gc-fwcs/i18n";
+import { getRouteLanguage } from "@gc-fwcs/i18n/routing";
 
 export const streamTimeout = 5_000;
 
@@ -39,23 +35,11 @@ export default async function handleRequest(
   // If you have middleware enabled:
   // loadContext: unstable_RouterContextProvider
 ) {
-
+  const lng = getRouteLanguage(request, i18nRoutes);
   const i18n = await createI18nServer(
-    request,
     routerContext,
-    i18nRoutes,
-    {
-      resources: {
-        en: {
-          common: commonEn,
-          layout: layoutEn
-        },
-        fr: {
-          common: commonFr,
-          layout: layoutFr
-        },
-      }
-    }
+    lng,
+    { defaultNS: ["common", "layout"] }
   );
 
   return new Promise((resolve, reject) => {

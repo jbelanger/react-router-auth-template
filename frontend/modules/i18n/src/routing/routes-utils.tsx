@@ -1,10 +1,10 @@
 import { createContext, useContext, ReactNode } from 'react';
-import { useMatches } from 'react-router';
-import type { RouteHandleData } from './types.ts';
 import { route, RouteConfigEntry } from '@react-router/dev/routes';
+import { useLocation } from 'react-router';
+import { AppLocale } from './index.ts';
 
 export type ExtendedRouteConfigEntry = RouteConfigEntry & {
-  lang: string;
+  lang: AppLocale;
 };
 
 const RoutesContext = createContext<RouteConfigEntry[]>([]);
@@ -25,6 +25,60 @@ export function I18nRoutesProvider({
 }
 
 /**
+ * Returns the alternate language for the given input language.
+ * (ie: 'en' → 'fr'; 'fr' → 'en')
+ */
+export function getAltLanguage(language: string): AppLocale {
+  switch (language) {
+    case 'en':
+      return 'fr';
+    case 'fr':
+      return 'en';
+    default:
+      throw new Error(`Could not determine altLanguage for language: ${language}.`);
+  }
+}
+
+/**
+ * Extracts the language from a route based on the given resource path.
+ *
+ * @param resource - The resource from which to extract the pathname (Request, URL, or string path)
+ * @param routes - Array of route configurations to search through
+ * @param fallback - Whether to fallback to 'en' (false) or throw an error (true) when no route is found
+ * @returns The detected language as AppLocale ('en' | 'fr')
+ * @throws {Error} When no route is found and fallback is true
+ */
+export function getRouteLanguage(resource: Request | URL | string, routes: RouteConfigEntry[], fallback: boolean = true): AppLocale {
+  const pathname = resource instanceof Request ? new URL(resource.url).pathname :
+                  resource instanceof URL ? resource.pathname :
+                  resource;
+  
+  const route = findRouteByPathname(routes, pathname);
+  if (route) {
+    return (route as ExtendedRouteConfigEntry).lang;
+  }
+  
+  console.error(`No route found for pathname: ${pathname}`);
+  if (!fallback) {
+    throw new Error(`No route found for pathname: ${pathname}`);
+  }
+
+  return 'en';
+}
+
+/**
+ * A hook that returns the current language from the route.
+ *
+ * @returns The current language as AppLocale ('en' | 'fr')
+ * @throws {Error} When no route is found
+ */
+export function useCurrentLanguage(): AppLocale {
+  const { pathname } = useLocation();
+  const routes = useRoutes();
+  return getRouteLanguage(pathname, routes, false);
+}
+
+/**
  * Hook to find a route by its ID. For server-side route lookup,
  * import findRouteById from routes.server.ts instead.
  */
@@ -39,17 +93,6 @@ export function useRoutes(): RouteConfigEntry[] {
 export function useRouteById(id: string): RouteConfigEntry | undefined {
   const routes = useRoutes();
   return findRouteById(routes, id);
-}
-
-/**
- * Hook to get all i18n namespaces from the current route matches
- */
-export function useI18nNamespaces(): string[] {
-  const matches = useMatches();
-  const namespaces = matches
-    .map(match => (match.handle as RouteHandleData | undefined)?.i18nNamespaces || [])
-    .flat();
-  return [...new Set(namespaces)];
 }
 
 /**

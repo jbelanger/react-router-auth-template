@@ -3,18 +3,8 @@ import { createInstance } from "i18next";
 import I18NextHttpBackend from "i18next-http-backend";
 import { initReactI18next } from "react-i18next";
 import { getInitialNamespaces } from "remix-i18next/client";
-import {i18nDefaults} from "./i18n.ts";
-
-interface I18nClientConfig {
-  debug?: boolean;
-}
-
-const languageDetector: LanguageDetectorModule = {
-  type: "languageDetector",
-  detect: () => document?.documentElement?.lang ?? "en",
-  init: () => {},
-  cacheUserLanguage: () => {},
-};
+import {addDefaultNamespaces, I18nConfig, i18nDefaults} from "./i18n.ts";
+import LanguageDetector from "i18next-browser-languagedetector";
 
 /**
  * Creates an i18n client instance with the provided configuration
@@ -22,27 +12,35 @@ const languageDetector: LanguageDetectorModule = {
  * @returns Configured i18n instance
  */
 export async function createI18nClient(
-  config: Partial<I18nClientConfig> = {}
+  config: Partial<I18nConfig> = {}
 ): Promise<i18n> {
   const mergedConfig: InitOptions = {
     ...i18nDefaults,
-    defaultNS: false,
     ...config,
   };
+const instance = createInstance();
+let ns = getInitialNamespaces();
+ns = addDefaultNamespaces(ns, mergedConfig.defaultNS);
 
-  const instance = createInstance();
-  const ns = getInitialNamespaces();
-  console.log("Client namespaces: " + ns);
-  await instance
+await instance
     .use(initReactI18next)
-    .use(languageDetector)
+    .use(LanguageDetector)
     .use(I18NextHttpBackend)
     .init({
       ...mergedConfig,
       ns,
       backend: {
         loadPath: '/locales/{{lng}}/{{ns}}.json'
-      }
+      },
+      detection: {
+        // Here only enable htmlTag detection, we'll detect the language only
+        // server-side with remix-i18next, by using the `<html lang>` attribute
+        // we can communicate to the client the language detected server-side
+        order: ["htmlTag"],
+        // Because we only use htmlTag, there's no reason to cache the language
+        // on the browser, so we disable it
+        caches: [],
+      },
     });
 
   return instance;

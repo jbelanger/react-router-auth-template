@@ -1,20 +1,18 @@
-import { I18nLink } from "@gc-fwcs/i18n/routing";
+import { getRouteLanguage, I18nLink, useCurrentLanguage } from "@gc-fwcs/i18n/routing";
 import type { Route } from "../+types/_index";
 import { ensureUserAuthenticated } from "../../utils/auth.utils.server";
 import { useLoaderData, Link } from "react-router";
-import { getLanguage, useCurrentLanguage } from "@gc-fwcs/i18n";
 import i18nRoutes from "~/routes";
 import { useTranslation } from "react-i18next";
-//import i18next from '../../i18n'
 
-export let handle = {
-  i18n: "common"
-};
+// export let handle = {
+//   i18n: ["common"]
+// };
 
 export async function loader({ context, request }: Route.LoaderArgs) {
   const user = await ensureUserAuthenticated(context.session, request);
 
-  const ll = getLanguage(request, i18nRoutes);
+  const ll = getRouteLanguage(request, i18nRoutes);
   if(!ll) {
     throw new Error("Could not determine language from request.");
   }
@@ -44,12 +42,12 @@ export function meta({ }: Route.MetaArgs) {
 
 export default function Index() {
   const { isAuthenticated, user, claims } = useLoaderData<typeof loader>();
-  const { t } = useTranslation();
+  const { t } = useTranslation("common");
   const currLang = useCurrentLanguage();
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6">{ t("common:Remix Auth2 Demo")}</h1>
+      <h1 className="text-3xl font-bold mb-6">{ t("Remix Auth2 Demo")}</h1>
 
       {isAuthenticated ? (
         <div className="space-y-6">
@@ -79,7 +77,7 @@ export default function Index() {
           )}
 
           <div className="space-x-4">
-            <I18nLink
+            <I18nLink              
               to="/protected/backend"
               lang={currLang}
               className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
