@@ -3,8 +3,7 @@ import { useEffect, useState } from "react";
 import type { Route } from "./+types/_protected.protected";
 import { useLoaderData } from "react-router";
 import { useTranslation } from "react-i18next";
-import { useCurrentLanguage } from "@gc-fwcs/i18n";
-
+import { useCurrentLanguage } from "@gc-fwcs/i18n/routing";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
     try {

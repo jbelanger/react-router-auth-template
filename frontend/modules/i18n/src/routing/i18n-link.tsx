@@ -12,14 +12,19 @@ interface I18nLinkProps extends Omit<ComponentProps<typeof Link>, 'to'> {
 
 /**
  * A component that renders an internationalized link.
- * Uses 'en' as default language if none provided.
+ * If no lang prop is provided or lang="current", uses the current route's language.
+ * External URLs (starting with 'http') are passed through directly.
+ *
  * @example
  * ```tsx
  * // Uses current language from route
  * <I18nLink to="protected/data">My Link</I18nLink>
- * 
+ *
  * // Explicitly set language
  * <I18nLink to="protected/data" lang="fr">My Link</I18nLink>
+ *
+ * // External link (passed through)
+ * <I18nLink to="https://example.com">External Link</I18nLink>
  * ```
  */
 export function I18nLink({ children, lang, to, params, ...props }: I18nLinkProps) {

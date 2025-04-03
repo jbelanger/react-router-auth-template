@@ -10,6 +10,13 @@ export type ExtendedRouteConfigEntry = RouteConfigEntry & {
 const RoutesContext = createContext<RouteConfigEntry[]>([]);
 
 
+/**
+ * A context provider that makes route configurations available throughout the application.
+ * Required for i18n routing functionality to work properly.
+ *
+ * @param routes - Array of route configurations to provide
+ * @param children - Child components that need access to routes
+ */
 export function I18nRoutesProvider({
   routes,
   children
@@ -44,16 +51,16 @@ export function getAltLanguage(language: string): AppLocale {
  *
  * @param resource - The resource from which to extract the pathname (Request, URL, or string path)
  * @param routes - Array of route configurations to search through
- * @param fallback - Whether to fallback to 'en' (false) or throw an error (true) when no route is found
+ * @param fallback - Whether to fallback to 'en' (true) or throw an error (false) when no route is found
  * @returns The detected language as AppLocale ('en' | 'fr')
- * @throws {Error} When no route is found and fallback is true
+ * @throws {Error} When no route is found and fallback is false
  */
 export function getRouteLanguage(resource: Request | URL | string, routes: RouteConfigEntry[], fallback: boolean = true): AppLocale {
   const pathname = resource instanceof Request ? new URL(resource.url).pathname :
                   resource instanceof URL ? resource.pathname :
                   resource;
   
-  const route = findRouteByPathname(routes, pathname);
+  const route = findRoute(routes, 'path', pathname);
   if (route) {
     return (route as ExtendedRouteConfigEntry).lang;
   }
@@ -79,8 +86,10 @@ export function useCurrentLanguage(): AppLocale {
 }
 
 /**
- * Hook to find a route by its ID. For server-side route lookup,
- * import findRouteById from routes.server.ts instead.
+ * Hook to access the full routes configuration.
+ * Used internally by other hooks, but can also be used directly if needed.
+ *
+ * @returns Array of all route configurations
  */
 export function useRoutes(): RouteConfigEntry[] {
   return useContext(RoutesContext);
@@ -92,39 +101,18 @@ export function useRoutes(): RouteConfigEntry[] {
  */
 export function useRouteById(id: string): RouteConfigEntry | undefined {
   const routes = useRoutes();
-  return findRouteById(routes, id);
+  return findRoute(routes, 'id', id);
 }
 
-/**
- * Find a route by its ID. This can be used server-side in loaders and actions.
- * For client-side route lookup, use the useRouteById hook instead.
- */
-export function findRouteById(routes: RouteConfigEntry[], id: string): RouteConfigEntry | undefined {
-  for (const route of routes) {
-    if (route.id === id) return route;
-    if (route.children?.length) {
-      const found = findRouteById(route.children, id);
-      if (found) return found;
-    }
-  }
-}
-
-/**
- * Find a route by its PathName. This can be used server-side in loaders and actions.
- * For client-side route lookup, use the useRouteById hook instead.
- */
-export function findRouteByPathname(routes: RouteConfigEntry[], pathname: string): RouteConfigEntry | undefined {
-  for (const route of routes) {
-    if (route.path === pathname) return route;
-    if (route.children?.length) {
-      const found = findRouteByPathname(route.children, pathname);
-      if (found) return found;
-    }
-  }
-}
 
 /**
  * Creates route configurations for both English and French versions of a route
+ *
+ * @param enPath - The path for the English version of the route
+ * @param frPath - The path for the French version of the route
+ * @param file - The file containing the route component
+ * @param children - Optional child routes
+ * @returns Array containing both language versions of the route with appropriate IDs
  */
 export function i18nRoute(enPath: string, frPath: string, file: string, children?: RouteConfigEntry[]): ExtendedRouteConfigEntry[] {
 
@@ -140,3 +128,21 @@ export function i18nRoute(enPath: string, frPath: string, file: string, children
       { ...route(normalizedFrPath, file, { id: `${normalizedEnPath}-fr` }, children), lang: 'fr' }
     ] as ExtendedRouteConfigEntry[];
   }
+
+/**
+ * Find a route by its ID or pathname. This can be used server-side in loaders and actions.
+ * For client-side route lookup, use the useRouteById hook instead.
+ */
+function findRoute<T extends keyof RouteConfigEntry>(
+  routes: RouteConfigEntry[],
+  key: T,
+  value: RouteConfigEntry[T]
+): RouteConfigEntry | undefined {
+  for (const route of routes) {
+    if (route[key] === value) return route;
+    if (route.children?.length) {
+      const found = findRoute(route.children, key, value);
+      if (found) return found;
+    }
+  }
+}
