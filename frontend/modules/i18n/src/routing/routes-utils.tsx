@@ -3,8 +3,7 @@ import { ReactNode, createContext, useContext } from 'react';
 import { RouteConfigEntry, route } from '@react-router/dev/routes';
 
 import { useLocation } from 'react-router';
-
-import { AppLocale } from './index.ts';
+import { AppLocale } from '../types.ts';
 
 export type ExtendedRouteConfigEntry = RouteConfigEntry & {
    lang: AppLocale;

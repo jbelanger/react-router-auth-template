@@ -6,8 +6,8 @@ import { FallbackNs, initReactI18next } from 'react-i18next';
 import type { EntryContext } from 'react-router';
 import { RemixI18Next } from 'remix-i18next/server';
 
-import { AppLocale } from '../routing/index.ts';
 import { I18nConfig, addDefaultNamespaces, i18nDefaults } from './i18n.ts';
+import { AppLocale } from '../types.ts';
 
 const backendConfig = {
    loadPath: resolve('./public/locales/{{lng}}/{{ns}}.json'),
@@ -67,7 +67,7 @@ export async function createI18nServer(
 export async function getFixedT<
    N extends FlatNamespace | readonly [FlatNamespace, ...FlatNamespace[]] = DefaultNamespace,
    KPrefix extends KeyPrefix<FallbackNs<N>> = undefined,
->(locale: AppLocale, namespaces: N) {
+>(locale: AppLocale, namespaces: N, keyPrefix?: KPrefix) {
    const i18next = createRemixI18Next(locale);
-   return i18next.getFixedT(locale, namespaces);
+   return i18next.getFixedT(locale, namespaces, {keyPrefix});
 }

@@ -1,137 +1,41 @@
-# I18n Routing Module
+# i18n Module Documentation
 
-This module provides internationalized (i18n) routing capabilities for React Router applications, allowing you to create language-specific routes with seamless language switching.
+This module helps you build websites that work in both English and French. It has two main parts that work together:
 
-## Key Components
+## 1. Translation Module (`src/i18n`)
 
-### 1. i18nRoute Function
+This part handles all the text translation needs:
 
-The `i18nRoute` function creates route configurations for multiple languages. It generates both English and French versions of a route automatically.
+- **Works everywhere**:
+  - In the browser: Detects user's language and loads the right translations
+  - On the server: Loads translations from files and works with server rendering
 
-```typescript
-i18nRoute(enPath: string, frPath: string, file: string, children?: RouteConfigEntry[])
-```
+- **What it does**:
+  - Shows content in English or French
+  - Loads translations as needed
+  - Makes sure translations are correct (with TypeScript)
+  - Figures out which language to use
+  - Works with server-side rendering
 
-Example:
+[Full Translation Guide →](src/i18n/README.md)
 
-```typescript
-...i18nRoute("products", "produits", "routes/products/index.tsx")
-```
+## 2. URL Management (`src/routing`)
 
-This creates two routes:
+This part handles website addresses (URLs) in both languages:
 
-- English: `/products` with ID `products-en`
-- French: `/produits` with ID `products-fr`
+- **Main Tools**:
+  - `i18nRoute`: Turns `/products` into both `/products` (English) and `/produits` (French)
+  - `I18nLink`: Creates links that switch between languages automatically
+  - `I18nRoutesProvider`: Makes language tools available throughout your app
 
-### 2. I18nLink Component
+- **What it does**:
+  - Creates matching URLs in both languages (e.g., `/about` and `/a-propos`)
+  - Switches URLs when changing languages
+  - Handles URL parameters in both languages
+  - Makes sure all URLs are valid
 
-A React component that renders internationalized links, automatically handling language-specific routes.
+For example, it lets you create pages that are available at both:
+- English: `www.example.com/products/chairs`
+- French: `www.example.com/produits/chaises`
 
-```tsx
-<I18nLink to="products">Our Products</I18nLink>
-```
-
-Features:
-
-- Automatically uses the current language context when no `lang` prop is provided
-- Supports explicit language override: `<I18nLink to="products" lang="fr">`
-- Handles route parameters
-- Falls back to regular links for external URLs (e.g., `<I18nLink to="https://example.com">`)
-
-### 3. I18nRoutesProvider Component
-
-A context provider component that makes route configurations available throughout the application.
-
-```tsx
-<I18nRoutesProvider routes={routes}>
-   <App />
-</I18nRoutesProvider>
-```
-
-## Usage
-
-### 1. Route Configuration
-
-In your `routes.ts` file:
-
-```typescript
-import { i18nRoute } from '@gc-fwcs/i18n/routing';
-
-const routes = [
-   // Regular routes
-   index('routes/_index.tsx'),
-
-   // i18n routes
-   layout('routes/shop/_layout.tsx', [
-      ...i18nRoute('products', 'produits', 'routes/shop/products.tsx'),
-      ...i18nRoute('products/categories', 'produits/categories', 'routes/shop/categories.tsx'),
-   ]),
-];
-```
-
-### 2. Using I18nLink in Components
-
-```tsx
-import { I18nLink } from '@gc-fwcs/i18n/routing';
-
-function Navigation() {
-   return (
-      <nav>
-         {/* Uses current language */}
-         <I18nLink to="products">Products</I18nLink>
-
-         {/* Explicitly set language */}
-         <I18nLink to="products" lang="fr">
-            Produits
-         </I18nLink>
-
-         {/* With route parameters */}
-         <I18nLink to="products/category" params={{ id: 'electronics' }}>
-            Electronics
-         </I18nLink>
-      </nav>
-   );
-}
-```
-
-## Implementation Details
-
-### Route IDs
-
-The system uses a consistent ID scheme for language-specific routes:
-
-- English routes: `{path}-en`
-- French routes: `{path}-fr`
-
-This allows the `I18nLink` component to find the corresponding route in different languages.
-
-### Hooks and Utilities
-
-The module provides several hooks and utilities:
-
-#### Client-Side Hooks
-
-- `useRoutes()`: Access all route configurations
-- `useRouteById(id)`: Find a specific route by ID
-- `useCurrentLanguage()`: Get the current language based on the route
-
-#### Server-Side Utilities
-
-- `getRouteLanguage(resource, routes, fallback?)`: Extract language from a route
-
-   - `resource`: Request, URL, or string path
-   - `routes`: Array of route configurations
-   - `fallback`: Whether to fallback to 'en' (true) or throw error (false)
-
-- `getAltLanguage(language)`: Get alternate language ('en' → 'fr' or 'fr' → 'en')
-
-Example server-side usage:
-
-```typescript
-import { getRouteLanguage } from '@gc-fwcs/i18n/routing';
-
-export async function loader({ request, routes }) {
-   const lang = getRouteLanguage(request, routes);
-   // Use language for i18n setup
-}
-```
+[Full URL Management Guide →](src/routing/README.md)

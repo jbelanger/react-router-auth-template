@@ -4,7 +4,6 @@
    "private": true,
    "type": "module",
    "exports": {
-      ".": "./src/i18n/index.ts",
       "./server": "./src/i18n/i18next.server.ts",
       "./client": "./src/i18n/i18next.client.ts",
       "./routing": "./src/routing/index.ts"
