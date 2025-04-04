@@ -38,7 +38,24 @@ Features:
 - Handles route parameters
 - Falls back to regular links for external URLs (e.g., `<I18nLink to="https://example.com">`)
 
-### 3. I18nRoutesProvider Component
+### 3. LanguageSwitchLink Component
+
+A React component that renders a link to switch between languages while maintaining the current route. It automatically determines the current route and its alternate language version.
+
+```tsx
+<LanguageSwitchLink />  // Uses default "FR"/"EN" text
+<LanguageSwitchLink frText="Français" enText="English" />  // Custom text
+```
+
+Features:
+
+- Automatically detects current route and language
+- Switches to the corresponding route in the alternate language
+- Customizable text for each language direction
+- Inherits all styling props from I18nLink
+- Falls back gracefully if no route is found
+
+### 4. I18nRoutesProvider Component
 
 A context provider component that makes route configurations available throughout the application.
 
@@ -89,6 +106,9 @@ function Navigation() {
          <I18nLink to="products/category" params={{ id: 'electronics' }}>
             Electronics
          </I18nLink>
+
+         {/* Language switch with custom text */}
+         <LanguageSwitchLink frText="Français" enText="English" className="lang-switch" />
       </nav>
    );
 }

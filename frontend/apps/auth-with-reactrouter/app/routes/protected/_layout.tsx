@@ -1,4 +1,4 @@
-import { I18nLink, getRouteLanguage } from '@gc-fwcs/i18n/routing';
+import { I18nLink, LanguageSwitchLink, getRouteLanguage } from '@gc-fwcs/i18n/routing';
 import { getFixedT } from '@gc-fwcs/i18n/server';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useLoaderData } from 'react-router-dom';
@@ -46,6 +46,11 @@ export default function ProtectedRoute() {
                      <I18nLink to="/protected/backend" className="text-white hover:text-gray-400">
                         Backend
                      </I18nLink>
+                     <LanguageSwitchLink
+                        className="text-white hover:text-gray-400"
+                        frText="FR"
+                        enText="EN"
+                     />
                   </div>
                </div>
             </div>
