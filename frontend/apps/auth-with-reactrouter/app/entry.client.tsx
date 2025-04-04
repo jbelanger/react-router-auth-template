@@ -18,7 +18,5 @@ function hydrateDocument(i18n: i18n): void {
 }
 
 startTransition(() => {
-   void createI18nClient({
-      defaultNS: ['common', 'layout'], // Set the default namespace to "common" instead of "translation"
-   }).then(hydrateDocument);
+   void createI18nClient({ defaultNS: ['common', 'layout'], }).then(hydrateDocument);
 });

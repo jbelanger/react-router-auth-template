@@ -80,6 +80,18 @@ export function getRouteLanguage(
 }
 
 /**
+ * Hook to get the current route configuration based on the current pathname.
+ *
+ * @returns The current route configuration or undefined if no matching route is found
+ * @see findRoute for the underlying route matching logic
+ */
+export function useCurrentRoute(): RouteConfigEntry | undefined {
+   const { pathname } = useLocation();
+   const routes = useRoutes();
+   return findRoute(routes, 'path', pathname);
+}
+
+/**
  * A hook that returns the current language from the route.
  *
  * @returns The current language as AppLocale ('en' | 'fr')

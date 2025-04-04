@@ -3,8 +3,8 @@ import type { ComponentProps } from 'react';
 import { Link, Params, generatePath } from 'react-router';
 import invariant from 'tiny-invariant';
 
-import { AppLocale } from './index.ts';
 import { useCurrentLanguage, useRouteById } from './routes-utils.tsx';
+import { AppLocale } from '../types.ts';
 
 /**
  * Valid language options for I18nLink

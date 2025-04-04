@@ -113,6 +113,7 @@ The module provides several hooks and utilities:
 
 - `useRoutes()`: Access all route configurations
 - `useRouteById(id)`: Find a specific route by ID
+- `useCurrentRoute()`: Get the current route configuration based on URL pathname
 - `useCurrentLanguage()`: Get the current language based on the route
 
 #### Server-Side Utilities
