@@ -176,5 +176,5 @@ export function hasAuthorizationRole(userData: UserData, requiredRole: string): 
 function redirectToLogin(request: Request) {
    const url = new URL(request.url);
    const returnUrl = encodeURIComponent(url.pathname + url.search);
-   return redirectDocument(`/auth/login?returnto=${returnUrl}`);
+   return redirectDocument(`/auth/login?returnUrl=${returnUrl}`);
 }
