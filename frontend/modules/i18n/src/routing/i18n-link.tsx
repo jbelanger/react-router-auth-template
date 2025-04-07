@@ -49,7 +49,7 @@ function isValidLanguage(lang: string): lang is I18nLinkLanguage {
  */
 export function I18nLink({ children, lang, to, params, ...props }: I18nLinkProps) {
    // Handle external links
-   if (to.startsWith('http')) {
+   if (to.startsWith('http') || to.startsWith('mailto') || to.startsWith('#')) {
       return (
          <Link {...props} to={to}>
             {children}
