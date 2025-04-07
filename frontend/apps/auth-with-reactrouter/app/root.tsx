@@ -1,9 +1,8 @@
-import { I18nRoutesProvider } from '@gc-fwcs/i18n/routing';
 import { useTranslation } from 'react-i18next';
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, isRouteErrorResponse } from 'react-router';
 
 import type { Route } from './+types/root';
-import i18nRoutes from './routes';
+import './app.css';
 
 export const links: Route.LinksFunction = () => [
    { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -38,11 +37,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-   return (
-      <I18nRoutesProvider routes={i18nRoutes}>
-         <Outlet />
-      </I18nRoutesProvider>
-   );
+   return <Outlet />;
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

@@ -14,12 +14,31 @@ export function meta({}: Route.MetaArgs) {
 export default function Index() {
    return (
       <div className="p-8">
-         <h1 className="mb-6 text-3xl font-bold">Remix Auth Demo</h1>
-
-         <div className="space-y-6">
-            <p>You are not logged in.</p>
-            <Link to="/protected" className="inline-block rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
-               Sign In
+         <h1 className="mb-8 text-4xl font-bold">Module Demos</h1>
+         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+            <Link to="/auth-demo" className="block rounded border border-gray-300 p-4 text-center hover:bg-gray-100">
+               Auth Demo
+            </Link>
+            <Link to="/auth" className="block rounded border border-gray-300 p-4 text-center hover:bg-gray-100">
+               Auth Routes
+            </Link>
+            <Link to="/i18n-demo" className="block rounded border border-gray-300 p-4 text-center hover:bg-gray-100">
+               i18n Demo
+            </Link>
+            <Link to="/logger-demo" className="block rounded border border-gray-300 p-4 text-center hover:bg-gray-100">
+               Logger Demo
+            </Link>
+            <Link to="/session-demo" className="block rounded border border-gray-300 p-4 text-center hover:bg-gray-100">
+               Session Demo
+            </Link>
+            <Link to="/express-demo" className="block rounded border border-gray-300 p-4 text-center hover:bg-gray-100">
+               Express Demo
+            </Link>
+            <Link to="/helpers-demo" className="block rounded border border-gray-300 p-4 text-center hover:bg-gray-100">
+               Helpers Demo
+            </Link>
+            <Link to="/protected" className="block rounded border border-gray-300 p-4 text-center hover:bg-gray-100">
+               Protected Area
             </Link>
          </div>
       </div>

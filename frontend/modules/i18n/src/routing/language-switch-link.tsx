@@ -1,11 +1,12 @@
 import type { ComponentProps } from 'react';
+
 import { I18nLink } from './i18n-link.tsx';
-import { useCurrentLanguage, useCurrentRoute, getAltLanguage } from './routes-utils.tsx';
+import { getAltLanguage, useCurrentLanguage, useCurrentRoute } from './routes-utils.tsx';
 
 /**
  * Properties for the LanguageSwitchLink component
  */
-interface LanguageSwitchLinkProps extends Omit<ComponentProps<typeof I18nLink>, 'to' | 'lang'> {
+interface LanguageSwitchLinkProps extends Omit<ComponentProps<typeof I18nLink>, 'to' | 'targetLang'> {
    /** Optional text to display when current language is English */
    frText?: string;
    /** Optional text to display when current language is French */
@@ -23,15 +24,15 @@ interface LanguageSwitchLinkProps extends Omit<ComponentProps<typeof I18nLink>, 
  *
  * // Custom text for each language
  * <LanguageSwitchLink frText="Français" enText="English" />
- * 
+ *
  * // With custom styling
  * <LanguageSwitchLink className="lang-switch" />
  * ```
  */
-export function LanguageSwitchLink({ frText = "FR", enText = "EN", ...props }: LanguageSwitchLinkProps) {
+export function LanguageSwitchLink({ frText = 'FR', enText = 'EN', ...props }: LanguageSwitchLinkProps) {
    const currentRoute = useCurrentRoute();
    const currentLanguage = useCurrentLanguage();
-   
+
    if (!currentRoute?.id) {
       console.error('LanguageSwitchLink: No route found');
       return null;
@@ -39,17 +40,13 @@ export function LanguageSwitchLink({ frText = "FR", enText = "EN", ...props }: L
 
    // Get the base route ID (remove the language suffix)
    const baseRouteId = currentRoute.id.replace(/-[a-z]{2}$/, '');
-   
+
    // Get the alternate language and corresponding display text
    const altLanguage = getAltLanguage(currentLanguage);
    const displayText = currentLanguage === 'en' ? frText : enText;
 
    return (
-      <I18nLink
-         {...props}
-         to={baseRouteId}
-         lang={altLanguage}
-      >
+      <I18nLink {...props} to={baseRouteId} reloadDocument targetLang={altLanguage}>
          {displayText}
       </I18nLink>
    );

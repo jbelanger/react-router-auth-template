@@ -33,8 +33,8 @@ A React component that renders internationalized links, automatically handling l
 
 Features:
 
-- Automatically uses the current language context when no `lang` prop is provided
-- Supports explicit language override: `<I18nLink to="products" lang="fr">`
+- Automatically uses the current language context when no `targetLang` prop is provided
+- Supports explicit language override: `<I18nLink to="products" targetLang="fr">`
 - Handles route parameters
 - Falls back to regular links for external URLs (e.g., `<I18nLink to="https://example.com">`)
 
@@ -98,7 +98,7 @@ function Navigation() {
          <I18nLink to="products">Products</I18nLink>
 
          {/* Explicitly set language */}
-         <I18nLink to="products" lang="fr">
+         <I18nLink to="products" targetLang="fr">
             Produits
          </I18nLink>
 

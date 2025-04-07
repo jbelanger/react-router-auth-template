@@ -1,10 +1,10 @@
 import type { ComponentProps } from 'react';
 
-import { Link, Params, generatePath } from 'react-router';
+import { Link, Params, To, generatePath } from 'react-router';
 import invariant from 'tiny-invariant';
 
-import { useCurrentLanguage, useRouteById } from './routes-utils.tsx';
 import { AppLocale } from '../types.ts';
+import { useCurrentLanguage, useRouteById } from './routes-utils.tsx';
 
 /**
  * Valid language options for I18nLink
@@ -20,7 +20,7 @@ interface I18nLinkProps extends Omit<ComponentProps<typeof Link>, 'to'> {
    /** Optional route parameters */
    params?: Params;
    /** Language to use for the link. If 'current', uses the current route's language */
-   lang?: I18nLinkLanguage;
+   targetLang?: I18nLinkLanguage;
 }
 
 /**
@@ -47,7 +47,7 @@ function isValidLanguage(lang: string): lang is I18nLinkLanguage {
  * <I18nLink to="https://example.com">External Link</I18nLink>
  * ```
  */
-export function I18nLink({ children, lang, to, params, ...props }: I18nLinkProps) {
+export function I18nLink({ children, targetLang, to, params, ...props }: I18nLinkProps) {
    // Handle external links
    if (to.startsWith('http') || to.startsWith('mailto') || to.startsWith('#')) {
       return (
@@ -57,19 +57,30 @@ export function I18nLink({ children, lang, to, params, ...props }: I18nLinkProps
       );
    }
    // Validate and resolve language
-   if (!lang || lang === 'current') {
-      lang = useCurrentLanguage();
-   } else if (!isValidLanguage(lang)) {
-      console.error(`Invalid language "${lang}" provided to I18nLink. Using current language.`);
-      lang = useCurrentLanguage();
+   let resolvedLang: I18nLinkLanguage;
+   if (!targetLang || targetLang === 'current') {
+      resolvedLang = useCurrentLanguage();
+   } else if (!isValidLanguage(targetLang)) {
+      console.error(`Invalid language "${targetLang}" provided to I18nLink. Using current language.`);
+      resolvedLang = useCurrentLanguage();
+   } else {
+      resolvedLang = targetLang;
    }
 
    // Find the route for this ID and language
-   const routeId = `${to}-${lang}`;
-   const route = useRouteById(routeId);
-   invariant(route?.path, `Route path not found for ${routeId}`);
+   const routeId = `${to}-${resolvedLang}`;
+   let route = useRouteById(routeId);
+   // If no route found, might not be an i18nRoute
+   if (!route) {
+      route = useRouteById(to);
+   }
 
-   const path = params ? generatePath(route.path, params) : route.path;
+   let path: To = '';
+   if (!route || route.path === undefined) {
+      path = to;
+   } else {
+      path = params ? generatePath(route.path, params) : (route.path as To);
+   }
 
    return (
       <Link {...props} to={path}>

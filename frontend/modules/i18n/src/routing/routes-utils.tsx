@@ -2,7 +2,8 @@ import { ReactNode, createContext, useContext } from 'react';
 
 import { RouteConfigEntry, route } from '@react-router/dev/routes';
 
-import { useLocation, matchPath } from 'react-router';
+import { matchRoutes, useLocation } from 'react-router';
+
 import { AppLocale } from '../types.ts';
 
 export type ExtendedRouteConfigEntry = RouteConfigEntry & {
@@ -100,7 +101,7 @@ export function useCurrentRoute(): RouteConfigEntry | undefined {
 export function useCurrentLanguage(): AppLocale {
    const { pathname } = useLocation();
    const routes = useRoutes();
-   return getRouteLanguage(pathname, routes, false);
+   return getRouteLanguage(pathname, routes, true);
 }
 
 /**
@@ -110,14 +111,14 @@ export function useCurrentLanguage(): AppLocale {
  * @returns Array of all route configurations
  */
 export function useRoutes(): RouteConfigEntry[] {
-    const routes = useContext(RoutesContext);
-    if (!routes || routes.length === 0) {
-        throw new Error(
-            'useRoutes must be used within an I18nRoutesProvider. ' +
-            'Please wrap your application with I18nRoutesProvider and provide your routes.'
-        );
-    }
-    return routes;
+   const routes = useContext(RoutesContext);
+   if (!routes || routes.length === 0) {
+      throw new Error(
+         'useRoutes must be used within an I18nRoutesProvider. ' +
+            'Please wrap your application with I18nRoutesProvider and provide your routes.',
+      );
+   }
+   return routes;
 }
 
 /**
@@ -158,15 +159,6 @@ export function i18nRoute(
 }
 
 /**
- * Find a route by its ID or pathname. This can be used server-side in loaders and actions.
- * For client-side route lookup, use the useRouteById hook instead.
- *
- * @param routes - Array of route configurations to search through
- * @param key - The key to match on (e.g., 'id', 'path')
- * @param value - The value to match against
- * @returns The matched route or undefined if no match found
- */
-/**
  * Find a route by its pathname. This can be used server-side in loaders and actions.
  * Supports route parameters (e.g., '/products/:id' matches '/products/1').
  *
@@ -174,21 +166,9 @@ export function i18nRoute(
  * @param pathname - The pathname to match against
  * @returns The matched route or undefined if no match found
  */
-function findRouteByPath(
-    routes: RouteConfigEntry[],
-    pathname: string,
-): RouteConfigEntry | undefined {
-    for (const route of routes) {
-        if (typeof route.path === 'string' && matchPath({ path: route.path, end: true }, pathname)) {
-            return route;
-        }
-        
-        if (route.children?.length) {
-            const found = findRouteByPath(route.children, pathname);
-            if (found) return found;
-        }
-    }
-    return undefined;
+function findRouteByPath(routes: RouteConfigEntry[], pathname: string): RouteConfigEntry | undefined {
+   const matches = matchRoutes(routes as { path: string }[], pathname);
+   return matches?.[matches.length - 1]?.route as RouteConfigEntry | undefined;
 }
 
 /**
@@ -198,19 +178,16 @@ function findRouteByPath(
  * @param id - The route ID to find
  * @returns The matched route or undefined if no match found
  */
-function findRouteById(
-    routes: RouteConfigEntry[],
-    id: string,
-): RouteConfigEntry | undefined {
-    for (const route of routes) {
-        if (route.id === id) return route;
-        
-        if (route.children?.length) {
-            const found = findRouteById(route.children, id);
-            if (found) return found;
-        }
-    }
-    return undefined;
+function findRouteById(routes: RouteConfigEntry[], id: string): RouteConfigEntry | undefined {
+   for (const route of routes) {
+      if (route.id === id) return route;
+
+      if (route.children?.length) {
+         const found = findRouteById(route.children, id);
+         if (found) return found;
+      }
+   }
+   return undefined;
 }
 
 /**

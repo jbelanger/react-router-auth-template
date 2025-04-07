@@ -1,3 +1,8 @@
 {
-   "React Router Demo": "React Router Demo EN"
+   "React Router Demo": "React Router Demo EN",
+   "i18n Demo": "i18n Demo",
+   "i18n Demo Home": "i18n Demo Home",
+   "This is a demonstration of internationalization features.": "This is a demonstration of internationalization features.",
+   "Switch languages using the buttons in the header.": "Switch languages using the buttons in the header.",
+   "This is server-side translated": "This is server-side translated"
 }
