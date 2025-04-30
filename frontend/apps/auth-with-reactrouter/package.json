@@ -34,7 +34,7 @@
       "react-router-dom": "7.4.0",
       "remix-i18next": "^7.1.0",
       "tsx": "^4.19.3",
-      "vite": "^6.2.3",
+      "vite": "^6.2.7",
       "vite-tsconfig-paths": "^5.1.4"
    },
    "devDependencies": {
