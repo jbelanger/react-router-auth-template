@@ -2,7 +2,7 @@
    "name": "react-router-auth-template",
    "private": true,
    "license": "AGPL-3.0",
-   "author": "Web Solutions and Client Access (WSCA)",
+   "author": "Joel Belanger",
    "scripts": {
       "preinstall": "npx only-allow pnpm",
       "build": "pnpm -F auth-demo run build",
