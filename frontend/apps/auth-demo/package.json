@@ -1,5 +1,5 @@
 {
-   "name": "auth-with-reactrouter",
+   "name": "auth-demo",
    "private": true,
    "type": "module",
    "sideEffects": false,
