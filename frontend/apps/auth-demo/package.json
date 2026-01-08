@@ -19,7 +19,7 @@
       "@gc-fwcs/i18n": "workspace:*",
       "@gc-fwcs/logger": "workspace:*",
       "@gc-fwcs/session": "workspace:*",
-      "@react-router/node": "^7.4.0",
+      "@react-router/node": "^7.9.4",
       "@react-router/serve": "^7.4.0",
       "cross-env": "^7.0.3",
       "i18next": "^24.2.3",
