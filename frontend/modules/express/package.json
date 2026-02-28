@@ -19,7 +19,7 @@
       "@gc-fwcs/session": "workspace:*",
       "@gc-fwcs/helpers": "workspace:*",
       "compression": "^1.8.0",
-      "minimatch": "^10.2.1",
+      "minimatch": "^10.2.3",
       "pino-http": "^9.0.0",
       "source-map-support": "^0.5.21",
       "vite-plugin-static-copy": "^2.3.0"
