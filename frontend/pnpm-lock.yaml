@@ -271,8 +271,8 @@ importers:
         specifier: workspace:*
         version: link:../tsconfig
       validator:
-        specifier: ~13.11.0
-        version: 13.11.0
+        specifier: ~13.15.22
+        version: 13.15.22
       zod:
         specifier: ~3.24.2
         version: 3.24.2
@@ -373,7 +373,7 @@ importers:
         version: 4.7.0
       validator:
         specifier: ^13.12.0
-        version: 13.12.0
+        version: 13.15.22
     devDependencies:
       '@types/express':
         specifier: ^5.0.0
@@ -4278,12 +4278,8 @@ packages:
     resolution: {integrity: sha512-OljLrQ9SQdOUqTaQxqL5dEfZWrXExyyWsozYlAWFawPVNuD83igl7uJD2RTkNMbniIYgt8l81eCJGIdQF7avLQ==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
-  validator@13.11.0:
-    resolution: {integrity: sha512-Ii+sehpSfZy+At5nPdnyMhx78fEoPDkR2XW/zimHEL3MyGJQOCQ7WeP20jPYRz7ZCpcKLB21NxuXHF3bxjStBQ==}
-    engines: {node: '>= 0.10'}
-
-  validator@13.12.0:
-    resolution: {integrity: sha512-c1Q0mCiPlgdTVVVIJIrBuxNicYE+t/7oKeI9MWLj3fh/uq2Pxh/3eeWbVZ4OcGW1TUf53At0njHw5SMdA3tmMg==}
+  validator@13.15.22:
+    resolution: {integrity: sha512-uT/YQjiyLJP7HSrv/dPZqK9L28xf8hsNca01HSz1dfmI0DgMfjopp1rO/z13NeGF1tVystF0Ejx3y4rUKPw+bQ==}
     engines: {node: '>= 0.10'}
 
   vary@1.1.2:
@@ -8662,9 +8658,7 @@ snapshots:
 
   validate-npm-package-name@5.0.1: {}
 
-  validator@13.11.0: {}
-
-  validator@13.12.0: {}
+  validator@13.15.22: {}
 
   vary@1.1.2: {}
 
